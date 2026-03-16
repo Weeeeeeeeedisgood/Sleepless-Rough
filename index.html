@@ -1,24 +1,51 @@
-import { useState, useEffect } from "react";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Sleepless Driver</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#08080c;color:#e4e2df;font-family:system-ui,-apple-system,sans-serif;-webkit-tap-highlight-color:transparent;overscroll-behavior:none}
+.m{font-family:'JetBrains Mono',monospace;font-weight:700}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:1000;display:flex;align-items:center;justify-content:center}
+.mb{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:900;display:flex;align-items:center;justify-content:center}
+.md{background:#141418;border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:22px;width:400px;max-width:92vw;max-height:85vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.inp{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:11px;color:#e4e2df;font-size:16px;font-family:inherit;outline:none;width:100%;-webkit-appearance:none}
+.nv{position:fixed;bottom:0;left:0;right:0;background:rgba(8,8,12,.95);border-top:1px solid rgba(255,255,255,.06);display:flex;justify-content:center;padding:8px 16px env(safe-area-inset-bottom);z-index:800}
+@keyframes xf{0%{opacity:1;transform:translateY(-50%) scale(1.3)}100%{opacity:0;transform:translateY(-120%) scale(.8)}}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+var useState=React.useState,useEffect=React.useEffect;
 var RENT=590; // legacy, now uses s.rent/s.whp
 var FL=[
-  {f:1,n:"Snooze Goblin",hp:80,i:"👹",d:"Stay in bed.",atk:"Sleep Pull",atkD:"Reduces all DMG by 15%",atkPct:0.15,defSt:"DIS"},
-  {f:2,n:"Scroll Demon",hp:120,i:"📱",d:"Infinite feeds.",atk:"Doom Scroll",atkD:"Reduces all DMG by 15%",atkPct:0.15,defSt:"DIS"},
-  {f:3,n:"Procrastinator",hp:180,i:"🐌",d:"Tomorrow. No.",atk:"Tomorrow Curse",atkD:"Reduces all DMG by 18%",atkPct:0.18,defSt:"DIS"},
-  {f:4,n:"Comfort Zone",hp:260,i:"🛡️",d:"Safe. Stuck.",atk:"Couch Lock",atkD:"Reduces all DMG by 18%",atkPct:0.18,defSt:"VIT"},
-  {f:5,n:"Inner Critic",hp:350,i:"🗣️",d:"Not enough.",atk:"Self Doubt",atkD:"Reduces all DMG by 20%",atkPct:0.20,defSt:"CRE"},
-  {f:6,n:"Dopamine Thief",hp:450,i:"🎰",d:"Cheap hits.",atk:"Cheap Hit",atkD:"Reduces all DMG by 20%",atkPct:0.20,defSt:"DIS"},
-  {f:7,n:"Void King",hp:600,i:"👑",d:"Emptiness.",atk:"The Emptiness",atkD:"Reduces all DMG by 22%",atkPct:0.22,defSt:"WIS"},
-  {f:8,n:"Shadow Self",hp:800,i:"🌑",d:"You that gave up.",atk:"Mirror Break",atkD:"Reduces all DMG by 22%",atkPct:0.22,defSt:"DIS"},
-  {f:9,n:"Perfectionist",hp:1000,i:"💀",d:"Never enough.",atk:"Paralysis",atkD:"Reduces all DMG by 25%",atkPct:0.25,defSt:"CRE"},
-  {f:10,n:"Apathy",hp:1500,i:"🔥",d:"Feel nothing. Go.",atk:"Numb Wave",atkD:"Reduces all DMG by 25%",atkPct:0.25,defSt:"HUS"}
+  {f:1,n:"Snooze Goblin",hp:80,i:"👹",d:"Stay in bed.",atk:"Sleep Pull",atkD:"-15% DMG",atkPct:0.15,defSt:"DIS"},
+  {f:2,n:"Scroll Demon",hp:120,i:"📱",d:"Infinite feeds.",atk:"Doom Scroll",atkD:"-15% DMG",atkPct:0.15,defSt:"DIS"},
+  {f:3,n:"Procrastinator",hp:180,i:"🐌",d:"Tomorrow. No.",atk:"Tomorrow Curse",atkD:"-18% DMG",atkPct:0.18,defSt:"DIS"},
+  {f:4,n:"Comfort Zone",hp:260,i:"🛡️",d:"Safe. Stuck.",atk:"Couch Lock",atkD:"-18% DMG",atkPct:0.18,defSt:"VIT"},
+  {f:5,n:"Inner Critic",hp:350,i:"🗣️",d:"Not enough.",atk:"Self Doubt",atkD:"-20% DMG",atkPct:0.20,defSt:"CRE"},
+  {f:6,n:"Dopamine Thief",hp:450,i:"🎰",d:"Cheap hits.",atk:"Cheap Hit",atkD:"-20% DMG",atkPct:0.20,defSt:"DIS"},
+  {f:7,n:"Void King",hp:600,i:"👑",d:"Emptiness.",atk:"The Emptiness",atkD:"-22% DMG",atkPct:0.22,defSt:"WIS"},
+  {f:8,n:"Shadow Self",hp:800,i:"🌑",d:"Gave up.",atk:"Mirror Break",atkD:"-22% DMG",atkPct:0.22,defSt:"DIS"},
+  {f:9,n:"Perfectionist",hp:1000,i:"💀",d:"Never enough.",atk:"Paralysis",atkD:"-25% DMG",atkPct:0.25,defSt:"CRE"},
+  {f:10,n:"Apathy",hp:1500,i:"🔥",d:"Feel nothing.",atk:"Numb Wave",atkD:"-25% DMG",atkPct:0.25,defSt:"HUS"}
 ];
 var DH={
   launch:[
     {id:"wake",n:"Morning Strike",xp:20,ic:"☀️",st:"DIS",tp:"open",desc:"Wake by 10am"},
     {id:"nscr",n:"Phone Shield",xp:25,ic:"📵",st:"DIS",tp:"def",desc:"No phone 30min"},
-    {id:"cre",n:"Content Blast",xp:30,ic:"🎬",st:"CRE",tp:"atk",desc:"60min content work"},
-    {id:"mov",n:"Iron Body",xp:20,ic:"💪",st:"VIT",tp:"def",desc:"Gym or 30min walk"},
-    {id:"slp",n:"Night Guard",xp:15,ic:"🌙",st:"VIT",tp:"fin",desc:"In bed by 2am"}
+    {id:"cre",n:"Content Blast",xp:30,ic:"🎬",st:"CRE",tp:"atk",desc:"60min content"},
+    {id:"mov",n:"Iron Body",xp:20,ic:"💪",st:"VIT",tp:"def",desc:"Gym or walk"},
+    {id:"slp",n:"Night Guard",xp:15,ic:"🌙",st:"VIT",tp:"fin",desc:"Bed by 2am"}
   ],
   grind:[
     {id:"wg",n:"Dawn Blade",xp:20,ic:"☀️",st:"DIS",tp:"open",desc:"Wake by 8am"},
@@ -31,16 +58,16 @@ var DH={
   creator:[
     {id:"wc",n:"Dawn Strike",xp:15,ic:"☀️",st:"DIS",tp:"open",desc:"Wake by 9am"},
     {id:"np",n:"Focus Wall",xp:30,ic:"📵",st:"DIS",tp:"def",desc:"No phone 1hr"},
-    {id:"c2",n:"Create Storm",xp:40,ic:"🎬",st:"CRE",tp:"atk",desc:"2hr creative block"},
+    {id:"c2",n:"Create Storm",xp:40,ic:"🎬",st:"CRE",tp:"atk",desc:"2hr creative"},
     {id:"mc",n:"Iron Body",xp:20,ic:"💪",st:"VIT",tp:"def",desc:"Gym/45min"},
     {id:"ad",n:"Admin Slash",xp:15,ic:"📋",st:"HUS",tp:"fin",desc:"Admin block"}
   ]
 };
-var MOVE_TYPES={open:{n:"Opening",i:"☀️",c:"#f59e0b",d:"Morning moves"},atk:{n:"Attack",i:"⚔️",c:"#ef4444",d:"Core damage"},def:{n:"Defense",i:"🛡️",c:"#3b82f6",d:"Block boss attacks"},fin:{n:"Finisher",i:"✨",c:"#a855f7",d:"End of day"}};
+var MT={open:{n:"Opening",i:"☀️",c:"#f59e0b"},atk:{n:"Attack",i:"⚔️",c:"#ef4444"},def:{n:"Defense",i:"🛡️",c:"#3b82f6"},fin:{n:"Finisher",i:"✨",c:"#a855f7"}};
 var DEF_PHASES=[{id:"launch",n:"Initiate",i:"⚡",c:"#f59e0b"},{id:"grind",n:"Night Rider",i:"🚕",c:"#06b6d4"},{id:"creator",n:"Creator",i:"🎨",c:"#a855f7"}];
 var PM={launch:{n:"Initiate",i:"⚡",c:"#f59e0b"},grind:{n:"Night Rider",i:"🚕",c:"#06b6d4"},creator:{n:"Creator",i:"🎨",c:"#a855f7"}};
 var RK=[{n:"Iron",t:0,c:"#78716c"},{n:"Bronze",t:7,c:"#d97706"},{n:"Silver",t:21,c:"#94a3b8"},{n:"Gold",t:50,c:"#eab308"},{n:"Platinum",t:100,c:"#22d3ee"},{n:"Diamond",t:200,c:"#818cf8"},{n:"Master",t:365,c:"#f472b6"}];
-var FM=[{n:"Iron",a:0,c:"#78716c",i:"⛏️"},{n:"Bronze",a:15000,c:"#d97706",i:"🥉"},{n:"Silver",a:45000,c:"#94a3b8",i:"🥈"},{n:"Gold",a:90000,c:"#eab308",i:"🥇"},{n:"Platinum",a:180000,c:"#22d3ee",i:"💎"},{n:"Diamond",a:500000,c:"#818cf8",i:"👑"}];
+var FML=[{n:"Iron",a:0,c:"#78716c",i:"⛏️"},{n:"Bronze",a:15000,c:"#d97706",i:"🥉"},{n:"Silver",a:45000,c:"#94a3b8",i:"🥈"},{n:"Gold",a:90000,c:"#eab308",i:"🥇"},{n:"Platinum",a:180000,c:"#22d3ee",i:"💎"},{n:"Diamond",a:500000,c:"#818cf8",i:"👑"}];
 var SDS=[{k:"VIT",n:"Vitality",i:"🏃",c:"#ef4444"},{k:"WIS",n:"Wisdom",i:"🧠",c:"#3b82f6"},{k:"CRE",n:"Creative",i:"🎨",c:"#a855f7"},{k:"HUS",n:"Hustle",i:"💰",c:"#eab308"},{k:"DIS",n:"Discipline",i:"🔥",c:"#f97316"}];
 var IC=["☀️","📵","🎬","💪","🌙","🧘","🥩","🎙️","📝","📖","📋","🧹","🧠","🎯","🔥","🚕","🎨","✍️","🎵","📸","🏃","💧","📚","💰","🌿","⚡"];
 var BQ=[{n:"Fog",q:"ONE habit.",xp:30},{n:"Scroll",q:"Phone away 15min.",xp:25},{n:"Heavy",q:"Sit up. Water.",xp:25},{n:"Escape",q:"20min productive.",xp:35},{n:"Void",q:"Text someone.",xp:35}];
@@ -49,15 +76,36 @@ function gw(o){var d=new Date();d.setDate(d.getDate()+(o||0));var j=new Date(d.g
 function gdd(o){var d=new Date();d.setDate(d.getDate()+(o||0));return d.toLocaleDateString("en-US",{weekday:"short",month:"short",day:"numeric"})}
 function gRk(d){var r=RK[0];for(var i=0;i<RK.length;i++)if(d>=RK[i].t)r=RK[i];return r}
 function gNR(d){for(var i=0;i<RK.length;i++)if(d<RK[i].t)return RK[i];return null}
-function gFR(a){var r=FM[0];for(var i=0;i<FM.length;i++)if(a>=FM[i].a)r=FM[i];return r}
-function gNF(a){for(var i=0;i<FM.length;i++)if(a<FM[i].a)return FM[i];return null}
+function gFR(a){var r=FML[0];for(var i=0;i<FML.length;i++)if(a>=FML[i].a)r=FML[i];return r}
+function gNF(a){for(var i=0;i<FML.length;i++)if(a<FML[i].a)return FML[i];return null}
 var _ni=100;function ni(){return"c"+(++_ni)+"_"+Date.now()}
-function sv(d){try{if(window.storage)window.storage.set("sd6",JSON.stringify(d)).catch(function(){})}catch(e){}}
-function ld2(){try{if(window.storage)return window.storage.get("sd6").then(function(r){return r?JSON.parse(r.value):null}).catch(function(){return null})}catch(e){}return Promise.resolve(null)}
+var SK="sd6";
+function sv(d){try{localStorage.setItem(SK,JSON.stringify(d))}catch(e){}}
+function ld3(){try{var d=localStorage.getItem(SK);return d?JSON.parse(d):null}catch(e){return null}}
 var I0={phase:"launch",phases:null,moves:null,hab:{launch:null,grind:null,creator:null},comp:{},txp:0,streak:0,taxi:0,cre:0,fuel:0,md:{},imp:[],work:[],de:{},tp:{},tl:[],mset:[],stats:{VIT:0,WIS:0,CRE:0,HUS:0,DIS:0},spu:0,runs:{},bf:0,defended:{},lastWeek:"",lastDay:"",rent:590,whp:4130};
 
-export default function App(){
-  var[s,ss]=useState(I0);
+function App(){
+  var saved=ld3();
+  var init=saved?Object.assign({},I0,saved,{stats:saved.stats||I0.stats,mset:saved.mset||[],runs:saved.runs||{},defended:saved.defended||{},lastWeek:saved.lastWeek||"",lastDay:saved.lastDay||""}):I0;
+  // Migrate: if no moves array, flatten old hab into moves with phase tags
+  if(!init.moves){
+    var mig=[];var seen={};
+    ["launch","grind","creator"].forEach(function(pk){
+      var hList=(init.hab&&init.hab[pk])||DH[pk]||[];
+      hList.forEach(function(h){
+        if(seen[h.id]){
+          // Already added from another phase, just add this phase tag
+          for(var mi=0;mi<mig.length;mi++){if(mig[mi].id===h.id&&mig[mi].phs.indexOf(pk)<0)mig[mi].phs.push(pk)}
+        }else{
+          seen[h.id]=true;
+          mig.push(Object.assign({},h,{phs:[pk]}));
+        }
+      });
+    });
+    init.moves=mig;
+  }
+  if(!init.phases)init.phases=DEF_PHASES.slice();
+  var[s,ss]=useState(init);
   var[vw,sVw]=useState("home");
   var[bd,sBd]=useState(false);
   var[j1,sJ1]=useState(false);
@@ -73,22 +121,35 @@ export default function App(){
   var[dof,sDof]=useState(0);
   var[nwBanner,sNwBanner]=useState(null);
   var[skBroke,setSkBroke]=useState(false);
+  if(saved&&saved._ni)_ni=saved._ni;
+  useEffect(function(){sv(Object.assign({},s,{_ni:_ni}))},[s]);
+  // === WEEKLY RESET + STREAK CHECK ===
   useEffect(function(){
     var today2=gd(0),thisWeek=gw(0),yesterday=gd(-1);
+    // Streak check: if yesterday exists and had 0 completions, reset streak
     if(s.lastDay&&s.lastDay!==today2&&s.lastDay!==yesterday){
+      // Missed a full day (lastDay is older than yesterday)
       if(s.streak>0){ss(function(p){return Object.assign({},p,{streak:0})});setSkBroke(true)}
     }else if(s.lastDay&&s.lastDay===yesterday){
+      // Yesterday exists - check if any habits were done
       var yComp=s.comp[yesterday]||[];
-      if(yComp.length===0&&s.streak>0){ss(function(p){return Object.assign({},p,{streak:0})});setSkBroke(true)}
+      if(yComp.length===0&&s.streak>0){
+        ss(function(p){return Object.assign({},p,{streak:0})});setSkBroke(true);
+      }
     }
+    // New week detection
     if(s.lastWeek&&s.lastWeek!==thisWeek){
       var prevRun=s.runs[s.lastWeek];
-      if(prevRun){sNwBanner({week:s.lastWeek,dmg:prevRun.d,floor:Math.max(0,prevRun.f-1),cleared:prevRun.cl?prevRun.cl.length:0})}
+      if(prevRun){
+        var floorReached=Math.max(0,prevRun.f-1);
+        sNwBanner({week:s.lastWeek,dmg:prevRun.d,floor:floorReached,cleared:prevRun.cl?prevRun.cl.length:0});
+      }
     }
-    if(s.lastDay!==today2||s.lastWeek!==thisWeek){ss(function(p){return Object.assign({},p,{lastDay:today2,lastWeek:thisWeek})})}
+    // Always update lastDay and lastWeek to current
+    if(s.lastDay!==today2||s.lastWeek!==thisWeek){
+      ss(function(p){return Object.assign({},p,{lastDay:today2,lastWeek:thisWeek})});
+    }
   },[]);
-  useEffect(function(){ld2().then(function(d){if(d){ss(function(){var merged=Object.assign({},I0,d,{stats:d.stats||I0.stats,mset:d.mset||[],runs:d.runs||{},defended:d.defended||{},lastWeek:d.lastWeek||"",lastDay:d.lastDay||""});if(!merged.moves){var mig=[];var seen={};["launch","grind","creator"].forEach(function(pk){var hList=(merged.hab&&merged.hab[pk])||DH[pk]||[];hList.forEach(function(h){if(seen[h.id]){for(var mi=0;mi<mig.length;mi++){if(mig[mi].id===h.id&&mig[mi].phs.indexOf(pk)<0)mig[mi].phs.push(pk)}}else{seen[h.id]=true;mig.push(Object.assign({},h,{phs:[pk]}))}})});merged.moves=mig}if(!merged.phases)merged.phases=DEF_PHASES.slice();return merged});if(d._ni)_ni=d._ni}})},[]);
-  useEffect(function(){sv(Object.assign({},s,{_ni:_ni}))},[s]);
   var td=gd(dof),tm=gd(dof+1),wk=gw(dof),dd=gdd(dof);
   var phases=s.phases||DEF_PHASES;
   var curPh=null;for(var pi2=0;pi2<phases.length;pi2++){if(phases[pi2].id===s.phase){curPh=phases[pi2];break}}
@@ -97,34 +158,22 @@ export default function App(){
   var allMoves=s.moves||[];
   var bh=allMoves.filter(function(m){return m.phs&&m.phs.indexOf(s.phase)>=0});
   var pl=s.tp[td]||[];
-  var plH={id:"__p__",n:"Plan Tomorrow",xp:10,ic:"📋",isPlan:true,st:"DIS",tp:"fin",desc:"Queue bonus tasks"};
+  var plH={id:"__p__",n:"Plan Tomorrow",xp:10,ic:"📋",isPlan:true,st:"DIS",tp:"fin"};
   var ah=bh.concat(pl).concat([plH]),dn=s.comp[td]||[];
   var run=s.runs[wk]||{d:0,f:1,cl:[]};
   var cfi=Math.min(run.f-1,FL.length-1),cf=FL[cfi];
-  var php=0;for(var zi=0;zi<cfi;zi++)php+=FL[zi].hp;
-  var dtf=Math.max(0,run.d-php),hpl=Math.max(0,cf.hp-dtf),acl=run.f>FL.length;
-
-  // Defense check: has user completed any defense-type move today matching boss's defSt?
+  var php2=0;for(var zi=0;zi<cfi;zi++)php2+=FL[zi].hp;
+  var dtf=Math.max(0,run.d-php2),hpl=Math.max(0,cf.hp-dtf),acl=run.f>FL.length;
   var defMoves=bh.filter(function(h){return h.tp==="def"&&h.st===cf.defSt});
-  var defended=false;
-  for(var di=0;di<defMoves.length;di++){if(dn.indexOf(defMoves[di].id)>=0){defended=true;break}}
-  // Also check if manually marked defended today
-  if(s.defended[td])defended=true;
-
-  // Debuff: if not defended, boss reduces DMG by atkPct. Stats can reduce this.
-  var statResist=(s.stats[cf.defSt]||0)*0.01; // each stat point = 1% resist
+  var defended=s.defended[td]||false;
+  for(var di=0;di<defMoves.length;di++){if(dn.indexOf(defMoves[di].id)>=0)defended=true}
+  var statResist=(s.stats[cf.defSt]||0)*0.01;
   var debuffPct=defended?0:Math.max(0,cf.atkPct-statResist);
-  var defBonus=defended?10:0; // bonus DMG for defending
-
-  function rx(h){
-    var base=h.xp;
-    var statMult=1+((s.stats[h.st||"DIS"]||0)*0.05);
-    var dmgMult=statMult*(1-debuffPct); // debuff reduces today's damage
-    return Math.round(base*dmgMult);
-  }
+  var defBonus=defended?10:0;
+  function rx(h){return Math.round(h.xp*(1+((s.stats[h.st||"DIS"]||0)*0.05))*(1-debuffPct))}
   var mx=0,dxp=0;for(var h2=0;h2<ah.length;h2++){mx+=Math.round(ah[h2].xp*(1+((s.stats[ah[h2].st||"DIS"]||0)*0.05)));if(dn.indexOf(ah[h2].id)>=0)dxp+=rx(ah[h2])}
-  if(defended)dxp+=defBonus; // defense bonus
-  var dp=mx>0?(dxp/mx)*100:0,adn=ah.length>0&&dn.length>=ah.length;
+  if(defended)dxp+=defBonus;
+  var dp=mx>0?Math.min((dxp/mx)*100,100):0,adn=ah.length>0&&dn.length>=ah.length;
   var fr=gFR(s.fuel),nfr=gNF(s.fuel);
   function wkOfDay(dateStr){var p2=dateStr.split("-");var d2=new Date(parseInt(p2[0]),parseInt(p2[1])-1,parseInt(p2[2]));var j2=new Date(d2.getFullYear(),0,1);return d2.getFullYear()+"-W"+String(Math.ceil(((d2-j2)/864e5+j2.getDay()+1)/7)).padStart(2,"0")}
   var wkWork=s.work.filter(function(d2){return wkOfDay(d2)===wk});
@@ -133,32 +182,22 @@ export default function App(){
   var bs=0;td.split("-").forEach(function(x){bs+=parseInt(x)});var bq=BQ[Math.abs(bs)%BQ.length];
   var rh=[];for(var rk2 in s.runs)rh.push([rk2,s.runs[rk2]]);rh.sort(function(a,b){return b[0]>a[0]?1:-1});rh=rh.slice(0,8);
   function up(fn){ss(function(p){return fn(p)})}
-  function pt(t,sub){sCel({t:t,s:sub});setTimeout(function(){sCel(null)},3500)}
+  function pt(t,sub){sCel({t:t,s:sub});setTimeout(function(){sCel(null)},3000)}
   function ddm(amt){up(function(p){var r=p.runs[wk]||{d:0,f:1,cl:[]};var nd=r.d+amt,nf=r.f,nc=r.cl.slice(),cum=0;for(var i=0;i<FL.length;i++){cum+=FL[i].hp;if(nd>=cum&&nc.indexOf(i+1)<0){nc.push(i+1);nf=i+2;(function(fname,fnum){setTimeout(function(){pt("Floor "+fnum+"!",fname+" slain!")},600)})(FL[i].n,i+1)}}var nr=Object.assign({},p.runs);nr[wk]={d:nd,f:nf,cl:nc};return Object.assign({},p,{runs:nr,bf:Math.max(p.bf||0,nf-1)})})}  function tog(id){
     if(id==="__p__"){sMod("plan");return}
     var h=null;for(var i=0;i<ah.length;i++)if(ah[i].id===id){h=ah[i];break}
     if(!h)return;
     if(dn.indexOf(id)<0){
-      var e=rx(h);
-      var isDefMove=h.tp==="def"&&h.st===cf.defSt;
-      up(function(p){
-        var nx=(p.comp[td]||[]).concat([id]),nm=Object.assign({},p.md);nm[id]=(nm[id]||0)+1;
-        var ns=p.streak;if(nx.length===ah.length){setTimeout(function(){pt("🔥 PERFECT!","Max dmg.")},600);ns++}
-        var c=Object.assign({},p.comp);c[td]=nx;
-        var nd=Object.assign({},p.defended);
-        if(isDefMove)nd[td]=true;
-        return Object.assign({},p,{comp:c,txp:p.txp+e+(isDefMove?defBonus:0),streak:ns,md:nm,defended:nd,lastDay:td,lastWeek:wk});
-      });
-      var totalDmg=e+(isDefMove?defBonus:0);
-      ddm(totalDmg);
-      sPop({id:id,a:totalDmg});setTimeout(function(){sPop(null)},1000);
-      if(isDefMove)setTimeout(function(){pt("🛡️ BLOCKED!","Boss attack deflected! +"+defBonus+" bonus")},400);
+      var e=rx(h);var isD=h.tp==="def"&&h.st===cf.defSt;
+      up(function(p){var nx=(p.comp[td]||[]).concat([id]),nm=Object.assign({},p.md);nm[id]=(nm[id]||0)+1;var ns=p.streak;if(nx.length===ah.length){setTimeout(function(){pt("🔥 PERFECT!","Max dmg.")},600);ns++}var c=Object.assign({},p.comp);c[td]=nx;var nd=Object.assign({},p.defended);if(isD)nd[td]=true;return Object.assign({},p,{comp:c,txp:p.txp+e+(isD?defBonus:0),streak:ns,md:nm,defended:nd,lastDay:td,lastWeek:wk})});
+      ddm(e+(isD?defBonus:0));sPop({id:id,a:e+(isD?defBonus:0)});setTimeout(function(){sPop(null)},1000);
+      if(isD)setTimeout(function(){pt("🛡️ BLOCKED!","+"+defBonus+" bonus DMG")},400);
     }else{
-      var e2=rx(h);var wasDefMove=h.tp==="def"&&h.st===cf.defSt;
-      up(function(p){var nx=(p.comp[td]||[]).filter(function(x){return x!==id}),nm=Object.assign({},p.md);nm[id]=Math.max(0,(nm[id]||0)-1);var r=p.runs[wk]||{d:0,f:1,cl:[]};var nr=Object.assign({},p.runs);var dmgRm=e2+(wasDefMove?defBonus:0);nr[wk]=Object.assign({},r,{d:Math.max(0,r.d-dmgRm)});var c=Object.assign({},p.comp);c[td]=nx;var nd=Object.assign({},p.defended);if(wasDefMove){nd[td]=false;for(var di2=0;di2<defMoves.length;di2++){if(defMoves[di2].id!==id&&nx.indexOf(defMoves[di2].id)>=0)nd[td]=true}}return Object.assign({},p,{comp:c,txp:Math.max(0,p.txp-dmgRm),md:nm,runs:nr,defended:nd})});
+      var e2=rx(h);var wasD=h.tp==="def"&&h.st===cf.defSt;
+      up(function(p){var nx=(p.comp[td]||[]).filter(function(x){return x!==id}),nm=Object.assign({},p.md);nm[id]=Math.max(0,(nm[id]||0)-1);var r=p.runs[wk]||{d:0,f:1,cl:[]};var nr=Object.assign({},p.runs);var dmgToRemove=e2+(wasD?defBonus:0);nr[wk]=Object.assign({},r,{d:Math.max(0,r.d-dmgToRemove)});var c=Object.assign({},p.comp);c[td]=nx;var nd=Object.assign({},p.defended);if(wasD){nd[td]=false;var stillDef=false;for(var di2=0;di2<defMoves.length;di2++){if(defMoves[di2].id!==id&&nx.indexOf(defMoves[di2].id)>=0)stillDef=true}if(stillDef)nd[td]=true}return Object.assign({},p,{comp:c,txp:Math.max(0,p.txp-dmgToRemove),md:nm,runs:nr,defended:nd})});
     }
   }
-  function cPlan(){if(dn.indexOf("__p__")<0){up(function(p){var c=Object.assign({},p.comp);c[td]=(c[td]||[]).concat(["__p__"]);return Object.assign({},p,{comp:c,txp:p.txp+10})});ddm(10);pt("📋 Planned!",(s.tp[tm]||[]).length+" tasks.")}sMod(null)}
+  function cPlan(){if(dn.indexOf("__p__")<0){up(function(p){var c=Object.assign({},p.comp);c[td]=(c[td]||[]).concat(["__p__"]);return Object.assign({},p,{comp:c,txp:p.txp+10})});ddm(10);pt("📋 Planned!",(s.tp[tm]||[]).length+" tasks")}sMod(null)}
   function aPT(t){up(function(p){var tp=Object.assign({},p.tp);tp[tm]=(tp[tm]||[]).concat([t]);return Object.assign({},p,{tp:tp})})}
   function rPT(tid){up(function(p){var tp=Object.assign({},p.tp);tp[tm]=(tp[tm]||[]).filter(function(t){return t.id!==tid});return Object.assign({},p,{tp:tp})})}
   function sLib(t){up(function(p){for(var i=0;i<p.tl.length;i++)if(p.tl[i].n===t.n)return p;return Object.assign({},p,{tl:p.tl.concat([t])})})}
@@ -168,326 +207,364 @@ export default function App(){
   function dlH(){up(function(p){return Object.assign({},p,{moves:(p.moves||[]).filter(function(m){return m.id!==ef.id})})});sMod(null)}
   function tgM(id){up(function(p){return Object.assign({},p,{mset:p.mset.indexOf(id)>=0?p.mset.filter(function(x){return x!==id}):p.mset.concat([id])})})}
   function alS(k){if(usp<=0)return;up(function(p){var ns=Object.assign({},p.stats);ns[k]=(ns[k]||0)+1;return Object.assign({},p,{stats:ns,spu:(p.spu||0)+1})})}
-  function lTaxi(){var a=parseInt(inp);if(!a)return;var nw=s.work.indexOf(td)<0;var rnt=s.rent||590;up(function(p){var o=p.de[td]||0,nd=Object.assign({},p.de);nd[td]=a;return Object.assign({},p,{work:nw?p.work.concat([td]):p.work,de:nd,taxi:p.taxi-o+a,fuel:p.fuel-o+a})});sInp("");sMod(null);pt(nw?"⚔️ -$"+rnt+"!":"💰 Updated","$"+parseInt(inp).toLocaleString())}
+  function lTaxi(){var a=parseInt(inp);if(!a)return;var nw=s.work.indexOf(td)<0;var rnt=s.rent||590;up(function(p){var o=p.de[td]||0,nd=Object.assign({},p.de);nd[td]=a;return Object.assign({},p,{work:nw?p.work.concat([td]):p.work,de:nd,taxi:p.taxi-o+a,fuel:p.fuel-o+a})});sInp("");sMod(null);pt(nw?"⚔️ -$"+rnt+"!":"Updated","$"+a.toLocaleString())}
   function lCre(){var a=parseInt(inp);if(!a)return;up(function(p){return Object.assign({},p,{cre:p.cre+a,fuel:p.fuel+a})});sInp("");sMod(null);pt("🎨 +$"+parseInt(inp).toLocaleString(),"")}
-  function lImp(){if(!inp.trim())return;var t=inp;up(function(p){return Object.assign({},p,{imp:p.imp.concat([{t:t,d:td}]),txp:p.txp+15})});ddm(15);sInp("");sMod(null);pt("+15 DMG","Chaos!")}
-  function dBD(){up(function(p){return Object.assign({},p,{txp:p.txp+bq.xp})});ddm(bq.xp);sBd(false);pt("⚔️ SURVIVED!","+"+bq.xp+" dmg")}
-  // Move type label
-  function mtL(tp){var mt=MOVE_TYPES[tp]||MOVE_TYPES.atk;return mt}
-  return(
-    <div style={{minHeight:"100vh",background:"#08080c",color:"#e4e2df",fontFamily:"system-ui,-apple-system,sans-serif"}}>
-      <style>{"@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap');*{box-sizing:border-box;margin:0;padding:0}.m{font-family:'JetBrains Mono',monospace;font-weight:700}.ov{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:1000;display:flex;align-items:center;justify-content:center}.mb{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(8px);z-index:900;display:flex;align-items:center;justify-content:center}.md{background:#141418;border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:22px;width:400px;max-width:92vw;max-height:85vh;overflow-y:auto}.inp{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:11px;color:#e4e2df;font-size:16px;font-family:inherit;outline:none;width:100%}.nv{position:fixed;bottom:0;left:0;right:0;background:rgba(8,8,12,.92);border-top:1px solid rgba(255,255,255,.06);display:flex;justify-content:center;padding:8px 16px;z-index:800}@keyframes xf{0%{opacity:1;transform:translateY(-50%) scale(1.3)}100%{opacity:0;transform:translateY(-120%) scale(.8)}}"}</style>
-      {cel&&<div className="ov" onClick={function(){sCel(null)}}><div style={{textAlign:"center",padding:40}}><div style={{fontSize:40,marginBottom:10}}>{cel.t}</div><div style={{fontSize:14,color:"#999"}}>{cel.s}</div></div></div>}
-      <div style={{maxWidth:520,margin:"0 auto",padding:"16px 16px 100px"}}>
-      {vw==="home"&&<>
-        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}>
-          <span style={{fontSize:12,color:"#666",fontWeight:600}}>{dd}</span>
-          <div style={{display:"flex",gap:4}}>
-            {dof!==0&&<span className="m" style={{fontSize:9,color:"#ef4444",background:"rgba(239,68,68,.1)",padding:"2px 6px",borderRadius:4}}>+{dof}d</span>}
-            {gm&&<span className="m" style={{fontSize:9,color:"#eab308",background:"rgba(234,179,8,.1)",padding:"2px 6px",borderRadius:4}}>GOD</span>}
-          </div>
-        </div>
-        {/* NEW WEEK BANNER */}
-        {nwBanner&&<div style={{background:"linear-gradient(135deg,rgba(234,179,8,.06),rgba(168,85,247,.04))",border:"1px solid rgba(234,179,8,.2)",borderRadius:16,padding:16,marginBottom:10,textAlign:"center"}}>
-          <div style={{fontSize:28,marginBottom:4}}>🗡️</div>
-          <div style={{fontSize:16,fontWeight:800,color:"#eab308"}}>NEW WEEK</div>
-          <div style={{fontSize:11,color:"#999",marginBottom:8}}>Fresh dungeon. New run. Let's go.</div>
-          <div style={{background:"rgba(255,255,255,.03)",borderRadius:10,padding:10,marginBottom:10}}>
-            <div className="m" style={{fontSize:9,color:"#888",textTransform:"uppercase",letterSpacing:1,marginBottom:4}}>Last week: {nwBanner.week}</div>
-            <div style={{display:"flex",justifyContent:"center",gap:16}}>
-              <div><div className="m" style={{fontSize:18,color:"#4ade80"}}>{nwBanner.dmg}</div><div style={{fontSize:9,color:"#666"}}>damage</div></div>
-              <div><div className="m" style={{fontSize:18,color:"#eab308"}}>F{nwBanner.floor}</div><div style={{fontSize:9,color:"#666"}}>floor</div></div>
-              <div><div className="m" style={{fontSize:18,color:"#a855f7"}}>{nwBanner.cleared}/10</div><div style={{fontSize:9,color:"#666"}}>cleared</div></div>
-            </div>
-          </div>
-          <button style={{width:"100%",padding:"9px 15px",borderRadius:10,border:"1px solid #eab308",background:"#eab308",color:"#000",cursor:"pointer",fontSize:13,fontWeight:700,fontFamily:"inherit"}} onClick={function(){sNwBanner(null)}}>⚔️ Enter the Dungeon</button>
-        </div>}
-        {/* STREAK BROKEN */}
-        {skBroke&&!nwBanner&&<div style={{background:"rgba(239,68,68,.04)",border:"1px solid rgba(239,68,68,.15)",borderRadius:12,padding:12,marginBottom:10,display:"flex",alignItems:"center",gap:10}}>
-          <span style={{fontSize:22}}>💔</span>
-          <div style={{flex:1}}>
-            <div style={{fontSize:12,fontWeight:700,color:"#ef4444"}}>Streak reset to 0</div>
-            <div style={{fontSize:10,color:"#666"}}>Missed a day. Start rebuilding.</div>
-          </div>
-          <button style={{background:"none",border:"none",color:"#444",cursor:"pointer",fontSize:14}} onClick={function(){setSkBroke(false)}}>✕</button>
-        </div>}
-        {/* FLOOR */}
-        <div style={{background:acl?"rgba(234,179,8,.03)":"rgba(239,68,68,.03)",border:"1px solid "+(acl?"rgba(234,179,8,.2)":"rgba(239,68,68,.12)"),borderRadius:16,padding:20,marginBottom:10}}>
-          <div style={{display:"flex",gap:3,marginBottom:10,flexWrap:"wrap"}}>
-            {FL.map(function(f,i){var cl2=run.cl.indexOf(f.f)>=0;var cur=cfi===i&&!acl;return <div key={i} style={{width:22,height:22,borderRadius:4,display:"flex",alignItems:"center",justifyContent:"center",fontSize:10,fontWeight:800,fontFamily:"'JetBrains Mono',monospace",background:cl2?"#4ade80":cur?ac:"rgba(255,255,255,.05)",color:cl2?"#000":cur?"#000":"#444",border:cur?"2px solid "+ac:"2px solid transparent"}}>{f.f}</div>})}
-          </div>
-          {acl?<div style={{textAlign:"center",padding:10}}><div style={{fontSize:36}}>👑</div><div style={{fontSize:20,fontWeight:900,color:"#eab308"}}>ALL CLEARED</div></div>
-          :<div>
-            <div style={{display:"flex",justifyContent:"space-between",marginBottom:8}}>
-              <div>
-                <div className="m" style={{fontSize:10,color:"#ef4444",textTransform:"uppercase",letterSpacing:1}}>Floor {cf.f}</div>
-                <div style={{fontSize:18,fontWeight:800}}>{cf.i} {cf.n}</div>
-                <div style={{fontSize:11,color:"#666",fontStyle:"italic"}}>{cf.d}</div>
-              </div>
-              <div style={{textAlign:"right"}}><div className="m" style={{fontSize:10,color:"#ef4444"}}>HP</div><div className="m" style={{fontSize:20,color:"#ef4444"}}>{hpl}</div><div style={{fontSize:9,color:"#555"}}>/{cf.hp}</div></div>
-            </div>
-            <div style={{height:16,borderRadius:8,background:"rgba(255,255,255,.04)",overflow:"hidden",border:"1px solid rgba(239,68,68,.15)"}}>
-              <div style={{height:"100%",borderRadius:8,width:(100-(hpl/cf.hp)*100)+"%",background:"linear-gradient(90deg,#4ade80,#22d3ee)",transition:"width .8s"}}/>
-            </div>
-            {/* BOSS ATTACK BANNER */}
-            <div style={{marginTop:10,padding:10,borderRadius:10,background:defended?"rgba(74,222,128,.06)":"rgba(239,68,68,.06)",border:"1px solid "+(defended?"rgba(74,222,128,.15)":"rgba(239,68,68,.15)")}}>
-              <div style={{display:"flex",alignItems:"center",gap:8}}>
-                <span style={{fontSize:20}}>{defended?"🛡️":"🔴"}</span>
-                <div style={{flex:1}}>
-                  {defended?<><div style={{fontSize:11,fontWeight:700,color:"#4ade80"}}>ATTACK BLOCKED!</div><div style={{fontSize:10,color:"#555"}}>+{defBonus} bonus DMG</div></>
-                  :<><div style={{fontSize:11,fontWeight:700,color:"#ef4444"}}>{cf.i} uses "{cf.atk}"</div><div style={{fontSize:10,color:"#888"}}>{cf.atkD}{statResist>0?" ("+Math.round(statResist*100)+"% resisted)":""}</div><div style={{fontSize:10,color:"#eab308",marginTop:2}}>🛡️ Defend with a {SDS.find(function(x){return x.k===cf.defSt}).n} defense move!</div></>}
-                </div>
-              </div>
-            </div>
-            <div style={{display:"flex",justifyContent:"space-between",marginTop:6,fontSize:10,color:"#555"}}>
-              <span>DMG: <span className="m" style={{color:"#4ade80"}}>{dtf}</span></span>
-              <span>Week: <span className="m" style={{color:ac}}>{run.d}</span></span>
-            </div>
-          </div>}
-          <div style={{display:"flex",justifyContent:"space-between",marginTop:6,fontSize:10,color:"#444"}}>
-            <span>Best: <span className="m" style={{color:"#eab308"}}>F{s.bf}</span></span>
-            <span>Now: <span className="m" style={{color:ac}}>F{Math.max(0,run.f-1)}</span></span>
-          </div>
-        </div>
-        {/* PHASE */}
-        <div style={{display:"flex",gap:5,marginBottom:8,flexWrap:"wrap"}}>
-          {phases.map(function(p){return <button key={p.id} style={{padding:"7px 12px",borderRadius:8,border:"1px solid "+(s.phase===p.id?p.c:"rgba(255,255,255,.06)"),background:s.phase===p.id?p.c:"transparent",color:s.phase===p.id?"#000":"#555",cursor:"pointer",fontSize:11,fontWeight:600,fontFamily:"inherit"}} onClick={function(){up(function(pp){return Object.assign({},pp,{phase:p.id})})}}>{p.i} {p.n}</button>})}
-          <button style={{padding:"7px 8px",borderRadius:8,border:"1px solid rgba(255,255,255,.06)",background:"transparent",color:"#444",cursor:"pointer",fontSize:10}} onClick={function(){sMod("phases")}}>⚙️</button>
-        </div>
-        {/* RENT */}
-        {s.phase==="grind"&&<div style={{background:"rgba(255,255,255,.025)",border:"1px solid "+(rdd?"rgba(74,222,128,.15)":"rgba(239,68,68,.08)"),borderRadius:16,padding:14,marginBottom:10}}>
-          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:6}}><div style={{display:"flex",alignItems:"center",gap:6}}><span style={{fontSize:12,fontWeight:800,color:rdd?"#4ade80":"#ef4444"}}>{rdd?"👑 RENT SLAIN":"👹 Rent Boss"}</span><button style={{background:"none",border:"none",color:"#444",cursor:"pointer",fontSize:10}} onClick={function(){sRentInp({daily:String(s.rent||590),weekly:String(s.whp||4130)});sMod("rentcfg")}}>⚙️</button></div>{!rdd&&<span className="m" style={{fontSize:14,color:"#ef4444"}}>${rhp.toLocaleString()}</span>}</div>
-          <div style={{height:10,borderRadius:5,background:"rgba(255,255,255,.04)",overflow:"hidden",marginBottom:6}}><div style={{height:"100%",width:(rhp/(s.whp||4130)*100)+"%",background:rdd?"#4ade80":"#ef4444",transition:"width .5s"}}/></div>
-          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}><span style={{fontSize:10,color:"#666"}}>{wkWork.length}d this wk = ${rd2.toLocaleString()}</span><button style={{padding:"6px 10px",borderRadius:8,border:"1px solid rgba(255,255,255,.08)",background:wkd?"rgba(255,255,255,.03)":"#eab308",color:wkd?"#e4e2df":"#000",cursor:"pointer",fontSize:10,fontWeight:600,fontFamily:"inherit"}} onClick={function(){sInp(wkd?String(te):"");sMod("taxi")}}>{wkd?"Edit":"🚕 Log"}</button></div>
-        </div>}
-        {/* TODAY */}
-        <div style={{background:"rgba(255,255,255,.025)",border:"1px solid rgba(255,255,255,.06)",borderRadius:16,padding:14,marginBottom:10}}>
-          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:6}}>
-            <span style={{fontSize:13,fontWeight:700}}>Today <span style={{fontSize:11,color:"#555"}}>{dn.length}/{ah.length}</span></span>
-            <span className="m" style={{fontSize:15,color:adn?"#4ade80":ac}}>{dxp}<span style={{fontSize:10,color:"#555"}}>/{mx}</span></span>
-          </div>
-          <div style={{height:8,borderRadius:4,background:"rgba(255,255,255,.06)",overflow:"hidden"}}><div style={{height:"100%",borderRadius:4,width:dp+"%",background:adn?"linear-gradient(90deg,#4ade80,#22d3ee)":ac,transition:"width .5s"}}/></div>
-          {debuffPct>0&&<div className="m" style={{fontSize:9,color:"#ef4444",marginTop:4}}>⚠️ Debuff: -{Math.round(debuffPct*100)}% DMG (defend to remove!)</div>}
-        </div>
-        {bd?<div style={{background:"linear-gradient(135deg,rgba(220,38,38,.08),rgba(153,27,27,.04))",border:"1px solid rgba(220,38,38,.2)",borderRadius:16,padding:18,marginBottom:10,textAlign:"center"}}>
-          <div style={{fontSize:32,marginBottom:4}}>⚔️</div><div style={{fontSize:17,fontWeight:800,color:"#ef4444"}}>BAD DAY</div><div style={{fontSize:14,fontWeight:700}}>{bq.n}</div>
-          <div style={{background:"rgba(255,255,255,.03)",borderRadius:9,padding:12,margin:"10px 0"}}><div className="m" style={{fontSize:9,color:"#ef4444",textTransform:"uppercase",letterSpacing:1,marginBottom:3}}>Quest</div><div style={{fontSize:13,fontWeight:600}}>{bq.q}</div></div>
-          <div className="m" style={{fontSize:11,color:"#eab308",marginBottom:8}}>+{bq.xp} dmg</div>
-          <div style={{display:"flex",gap:6,justifyContent:"center"}}><button style={{padding:"9px 15px",borderRadius:10,border:"1px solid rgba(255,255,255,.08)",background:"rgba(255,255,255,.03)",color:"#e4e2df",cursor:"pointer",fontSize:13,fontWeight:600,fontFamily:"inherit"}} onClick={function(){sBd(false)}}>Back</button><button style={{padding:"9px 15px",borderRadius:10,border:"1px solid #dc2626",background:"linear-gradient(135deg,#dc2626,#991b1b)",color:"white",cursor:"pointer",fontSize:13,fontWeight:600,fontFamily:"inherit"}} onClick={dBD}>✓ Done</button></div>
-        </div>:<>
-        {/* HABITS */}
-        <div style={{background:"rgba(255,255,255,.025)",border:"1px solid rgba(255,255,255,.06)",borderRadius:16,padding:14,marginBottom:10}}>
-          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}>
-            <span style={{fontSize:13,fontWeight:700}}>{j1?"🎯 One":"Moves"}</span>
-            <button style={{padding:"4px 8px",borderRadius:8,border:"1px solid rgba(255,255,255,.08)",background:"rgba(255,255,255,.03)",color:"#e4e2df",cursor:"pointer",fontSize:10,fontWeight:600,fontFamily:"inherit"}} onClick={function(){sJ1(!j1)}}>{j1?"All":"🎯"}</button>
-          </div>
-          {(j1?[ah.find(function(h){return dn.indexOf(h.id)<0&&!h.isPlan})||ah[0]]:ah).filter(Boolean).map(function(h){
-            var d2=dn.indexOf(h.id)>=0,md2=s.md[h.id]||0,rk=gRk(md2);
-            var isP=h.isPlan,isB=false;for(var pi=0;pi<pl.length;pi++)if(pl[pi].id===h.id)isB=true;
-            var isM=s.mset.indexOf(h.id)>=0,r2=rx(h);
-            var mt=mtL(h.tp||"atk");
-            var isDef=h.tp==="def"&&h.st===cf.defSt&&!acl;
-            return(<div key={h.id} style={{display:"flex",alignItems:"center",gap:10,padding:11,borderRadius:11,cursor:"pointer",marginBottom:2,background:d2?"rgba(74,222,128,.06)":isDef?"rgba(59,130,246,.04)":isP?"rgba(168,85,247,.04)":isB?"rgba(234,179,8,.04)":"transparent",border:"1px solid "+(d2?"rgba(74,222,128,.12)":isDef?"rgba(59,130,246,.15)":"transparent"),borderLeft:isM?"3px solid #818cf8":"1px solid transparent",position:"relative"}} onClick={function(){tog(h.id)}}>
-              <div style={{width:26,height:26,borderRadius:7,border:"2px solid "+(d2?"#4ade80":"rgba(255,255,255,.15)"),background:d2?"#4ade80":"transparent",display:"flex",alignItems:"center",justifyContent:"center",color:"#000",fontSize:13,flexShrink:0}}>{d2?"✓":""}</div>
-              <span style={{fontSize:17}}>{h.ic}</span>
-              <div style={{flex:1,minWidth:0}}>
-                <div style={{fontWeight:600,fontSize:13,opacity:d2?0.4:1,textDecoration:d2?"line-through":"none"}}>{h.n}</div>
-                <div style={{display:"flex",gap:4,alignItems:"center",marginTop:1,flexWrap:"wrap"}}>
-                  <span className="m" style={{fontSize:10,color:"#ef4444"}}>⚔️{r2}</span>
-                  <span style={{fontSize:8,color:mt.c,fontWeight:700,background:mt.c+"15",padding:"1px 4px",borderRadius:3}}>{mt.i}{mt.n.charAt(0)}</span>
-                  {!isP&&!isB&&<span className="m" style={{fontSize:8,color:rk.c}}>{rk.n}</span>}
-                  {isDef&&!d2&&<span style={{fontSize:8,color:"#3b82f6",fontWeight:700}}>🛡️DEF</span>}
-                  {isM&&<span style={{fontSize:8,color:"#818cf8",fontWeight:700}}>★</span>}
-                  {isB&&<span style={{fontSize:8,color:"#eab308",fontWeight:600}}>BONUS</span>}
-                  {isP&&<span style={{fontSize:8,color:"#a855f7",fontWeight:600}}>Plan</span>}
-                </div>
-              </div>
-              {pop&&pop.id===h.id&&<div style={{position:"absolute",right:14,top:"50%",color:"#ef4444",fontWeight:800,fontSize:14,fontFamily:"'JetBrains Mono',monospace",animation:"xf 1s forwards",pointerEvents:"none",transform:"translateY(-50%)"}}>-{pop.a}</div>}
-            </div>)})}
-        </div>
-        <div style={{display:"flex",gap:6,marginBottom:8}}>
-          <button style={{flex:1,padding:"9px 15px",borderRadius:10,border:"1px solid rgba(255,255,255,.08)",background:"rgba(255,255,255,.03)",color:"#e4e2df",cursor:"pointer",fontSize:12,fontWeight:600,fontFamily:"inherit"}} onClick={function(){sInp("");sMod("impulse")}}>⚡ Impulse</button>
-          <button style={{flex:1,padding:"9px 15px",borderRadius:10,border:"1px solid #dc2626",background:"linear-gradient(135deg,#dc2626,#991b1b)",color:"white",cursor:"pointer",fontSize:12,fontWeight:600,fontFamily:"inherit"}} onClick={function(){sBd(true)}}>⚔️ Bad Day</button>
-        </div></>}
-        {/* FUEL */}
-        <div style={{background:"rgba(255,255,255,.025)",border:"1px solid rgba(255,255,255,.06)",borderRadius:16,padding:14,marginBottom:10}}>
-          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:5}}><span style={{fontSize:13,fontWeight:700}}>⛽ Freedom Fuel</span><button style={{padding:"4px 8px",borderRadius:8,border:"1px solid rgba(255,255,255,.08)",background:"rgba(255,255,255,.03)",color:"#e4e2df",cursor:"pointer",fontSize:10,fontWeight:600,fontFamily:"inherit"}} onClick={function(){sInp("");sMod("cre")}}>🎨 +</button></div>
-          <div className="m" style={{fontSize:22,color:fr.c,marginBottom:8}}>${s.fuel.toLocaleString()}</div>
-          <div style={{display:"flex",gap:6,marginBottom:8}}><div style={{flex:1,background:"rgba(234,179,8,.04)",borderRadius:8,padding:"7px 9px"}}><div style={{fontSize:8,color:"#eab308",fontWeight:700,textTransform:"uppercase"}}>🚕 Taxi</div><div className="m" style={{fontSize:14,color:"#eab308"}}>${s.taxi.toLocaleString()}</div></div><div style={{flex:1,background:"rgba(168,85,247,.04)",borderRadius:8,padding:"7px 9px"}}><div style={{fontSize:8,color:"#a855f7",fontWeight:700,textTransform:"uppercase"}}>🎨 Creative</div><div className="m" style={{fontSize:14,color:"#a855f7"}}>${s.cre.toLocaleString()}</div></div></div>
-          {nfr&&<div style={{height:8,borderRadius:4,background:"rgba(255,255,255,.06)",overflow:"hidden"}}><div style={{height:"100%",borderRadius:4,width:Math.min(((s.fuel-fr.a)/(nfr.a-fr.a))*100,100)+"%",background:"linear-gradient(90deg,"+fr.c+","+nfr.c+")",transition:"width .5s"}}/></div>}
-          <div style={{display:"flex",justifyContent:"space-between",marginTop:3}}><span className="m" style={{fontSize:10,color:fr.c}}>{fr.i} {fr.n}</span>{nfr&&<span className="m" style={{fontSize:9,color:"#555"}}>{nfr.n}@${nfr.a.toLocaleString()}</span>}</div>
-        </div>
-      </>}
-      {/* MOVES TAB */}
-      {vw==="moves"&&<><h2 style={{fontSize:20,fontWeight:800,marginBottom:3}}>⚔️ Attack Moves</h2><p style={{fontSize:11,color:"#666",marginBottom:12}}>Your moveset. Tap to edit. Build your arsenal.</p>
-        {Object.keys(MOVE_TYPES).map(function(tpKey){
-          var mt=MOVE_TYPES[tpKey];
-          var moves=bh.filter(function(h){return(h.tp||"atk")===tpKey});
+  function lImp(){if(!inp.trim())return;var t=inp;up(function(p){return Object.assign({},p,{imp:p.imp.concat([{t:t,d:td}]),txp:p.txp+15})});ddm(15);sInp("");sMod(null);pt("+15 DMG","")}
+  function dBD(){up(function(p){return Object.assign({},p,{txp:p.txp+bq.xp})});ddm(bq.xp);sBd(false);pt("⚔️ SURVIVED!","+"+bq.xp)}
+  // btn helper
+  function B(props){return React.createElement("button",{style:Object.assign({padding:"9px 15px",borderRadius:10,border:"1px solid rgba(255,255,255,.08)",background:"rgba(255,255,255,.03)",color:"#e4e2df",cursor:"pointer",fontSize:13,fontWeight:600,fontFamily:"inherit",WebkitAppearance:"none"},props.s||{}),onClick:props.o},props.children)}
+  // ═══ RENDER ═══
+  return React.createElement("div",{style:{minHeight:"100vh",paddingBottom:10}},
+    // Celebration overlay
+    cel&&React.createElement("div",{className:"ov",onClick:function(){sCel(null)}},React.createElement("div",{style:{textAlign:"center",padding:40}},React.createElement("div",{style:{fontSize:40,marginBottom:10}},cel.t),React.createElement("div",{style:{fontSize:14,color:"#999"}},cel.s))),
+    React.createElement("div",{style:{maxWidth:520,margin:"0 auto",padding:"16px 16px 90px"}},
+      // ═══ HOME ═══
+      vw==="home"&&React.createElement(React.Fragment,null,
+        // Date
+        React.createElement("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}},
+          React.createElement("span",{style:{fontSize:12,color:"#666",fontWeight:600}},dd),
+          React.createElement("div",{style:{display:"flex",gap:4}},
+            dof!==0&&React.createElement("span",{className:"m",style:{fontSize:9,color:"#ef4444",background:"rgba(239,68,68,.1)",padding:"2px 6px",borderRadius:4}},"+"+dof+"d"),
+            gm&&React.createElement("span",{className:"m",style:{fontSize:9,color:"#eab308",background:"rgba(234,179,8,.1)",padding:"2px 6px",borderRadius:4}},"GOD")
+          )
+        ),
+        // New Week Banner
+        nwBanner&&React.createElement("div",{style:{background:"linear-gradient(135deg,rgba(234,179,8,.06),rgba(168,85,247,.04))",border:"1px solid rgba(234,179,8,.2)",borderRadius:16,padding:16,marginBottom:10,textAlign:"center"}},
+          React.createElement("div",{style:{fontSize:28,marginBottom:4}},"🗡️"),
+          React.createElement("div",{style:{fontSize:16,fontWeight:800,color:"#eab308"}},"NEW WEEK"),
+          React.createElement("div",{style:{fontSize:11,color:"#999",marginBottom:8}},"Fresh dungeon. New run. Let's go."),
+          React.createElement("div",{style:{background:"rgba(255,255,255,.03)",borderRadius:10,padding:10,marginBottom:10}},
+            React.createElement("div",{className:"m",style:{fontSize:9,color:"#888",textTransform:"uppercase",letterSpacing:1,marginBottom:4}},"Last week: "+nwBanner.week),
+            React.createElement("div",{style:{display:"flex",justifyContent:"center",gap:16}},
+              React.createElement("div",null,React.createElement("div",{className:"m",style:{fontSize:18,color:"#4ade80"}},nwBanner.dmg),React.createElement("div",{style:{fontSize:9,color:"#666"}},"damage")),
+              React.createElement("div",null,React.createElement("div",{className:"m",style:{fontSize:18,color:"#eab308"}},"F"+nwBanner.floor),React.createElement("div",{style:{fontSize:9,color:"#666"}},"floor")),
+              React.createElement("div",null,React.createElement("div",{className:"m",style:{fontSize:18,color:"#a855f7"}},nwBanner.cleared+"/10"),React.createElement("div",{style:{fontSize:9,color:"#666"}},"cleared"))
+            )
+          ),
+          B({s:{background:"#eab308",color:"#000",borderColor:"#eab308",fontWeight:700,width:"100%"},o:function(){sNwBanner(null)},children:"⚔️ Enter the Dungeon"})
+        ),
+        // Streak broken banner
+        skBroke&&!nwBanner&&React.createElement("div",{style:{background:"rgba(239,68,68,.04)",border:"1px solid rgba(239,68,68,.15)",borderRadius:12,padding:12,marginBottom:10,display:"flex",alignItems:"center",gap:10}},
+          React.createElement("span",{style:{fontSize:22}},"💔"),
+          React.createElement("div",{style:{flex:1}},
+            React.createElement("div",{style:{fontSize:12,fontWeight:700,color:"#ef4444"}},"Streak reset to 0"),
+            React.createElement("div",{style:{fontSize:10,color:"#666"}},"Missed a day. Start rebuilding.")
+          ),
+          React.createElement("button",{style:{background:"none",border:"none",color:"#444",cursor:"pointer",fontSize:14},onClick:function(){setSkBroke(false)}},"✕")
+        ),
+        // Floor Boss
+        React.createElement("div",{style:{background:acl?"rgba(234,179,8,.03)":"rgba(239,68,68,.03)",border:"1px solid "+(acl?"rgba(234,179,8,.2)":"rgba(239,68,68,.12)"),borderRadius:16,padding:18,marginBottom:10}},
+          // Floor dots
+          React.createElement("div",{style:{display:"flex",gap:3,marginBottom:10,flexWrap:"wrap"}},
+            FL.map(function(f,i){var cl2=run.cl.indexOf(f.f)>=0;var cur=cfi===i&&!acl;return React.createElement("div",{key:i,style:{width:22,height:22,borderRadius:4,display:"flex",alignItems:"center",justifyContent:"center",fontSize:10,fontWeight:800,fontFamily:"'JetBrains Mono',monospace",background:cl2?"#4ade80":cur?ac:"rgba(255,255,255,.05)",color:cl2?"#000":cur?"#000":"#444",border:cur?"2px solid "+ac:"2px solid transparent"}},f.f)})
+          ),
+          acl?React.createElement("div",{style:{textAlign:"center",padding:10}},React.createElement("div",{style:{fontSize:36}},"👑"),React.createElement("div",{style:{fontSize:20,fontWeight:900,color:"#eab308"}},"ALL CLEARED"))
+          :React.createElement("div",null,
+            React.createElement("div",{style:{display:"flex",justifyContent:"space-between",marginBottom:8}},
+              React.createElement("div",null,
+                React.createElement("div",{className:"m",style:{fontSize:10,color:"#ef4444",textTransform:"uppercase",letterSpacing:1}},"Floor "+cf.f),
+                React.createElement("div",{style:{fontSize:18,fontWeight:800}},cf.i+" "+cf.n),
+                React.createElement("div",{style:{fontSize:11,color:"#666",fontStyle:"italic"}},cf.d)
+              ),
+              React.createElement("div",{style:{textAlign:"right"}},
+                React.createElement("div",{className:"m",style:{fontSize:10,color:"#ef4444"}},"HP"),
+                React.createElement("div",{className:"m",style:{fontSize:20,color:"#ef4444"}},hpl),
+                React.createElement("div",{style:{fontSize:9,color:"#555"}},"/"+cf.hp)
+              )
+            ),
+            // HP bar
+            React.createElement("div",{style:{height:16,borderRadius:8,background:"rgba(255,255,255,.04)",overflow:"hidden",border:"1px solid rgba(239,68,68,.15)"}},
+              React.createElement("div",{style:{height:"100%",borderRadius:8,width:(100-(hpl/cf.hp)*100)+"%",background:"linear-gradient(90deg,#4ade80,#22d3ee)",transition:"width .8s"}})
+            ),
+            // Boss attack banner
+            React.createElement("div",{style:{marginTop:10,padding:10,borderRadius:10,background:defended?"rgba(74,222,128,.06)":"rgba(239,68,68,.06)",border:"1px solid "+(defended?"rgba(74,222,128,.15)":"rgba(239,68,68,.15)")}},
+              React.createElement("div",{style:{display:"flex",alignItems:"center",gap:8}},
+                React.createElement("span",{style:{fontSize:18}},defended?"🛡️":"🔴"),
+                defended?React.createElement("div",null,React.createElement("div",{style:{fontSize:11,fontWeight:700,color:"#4ade80"}},"BLOCKED!"),React.createElement("div",{style:{fontSize:10,color:"#555"}},"+"+defBonus+" bonus"))
+                :React.createElement("div",null,
+                  React.createElement("div",{style:{fontSize:11,fontWeight:700,color:"#ef4444"}},cf.i+" "+cf.atk+"!"),
+                  React.createElement("div",{style:{fontSize:10,color:"#888"}},cf.atkD),
+                  React.createElement("div",{style:{fontSize:10,color:"#eab308",marginTop:2}},"🛡️ Need "+SDS.find(function(x){return x.k===cf.defSt}).n+" defense!")
+                )
+              )
+            ),
+            React.createElement("div",{style:{display:"flex",justifyContent:"space-between",marginTop:6,fontSize:10,color:"#555"}},
+              React.createElement("span",null,"DMG: ",React.createElement("span",{className:"m",style:{color:"#4ade80"}},dtf)),
+              React.createElement("span",null,"Week: ",React.createElement("span",{className:"m",style:{color:ac}},run.d))
+            )
+          ),
+          React.createElement("div",{style:{display:"flex",justifyContent:"space-between",marginTop:6,fontSize:10,color:"#444"}},
+            React.createElement("span",null,"Best: ",React.createElement("span",{className:"m",style:{color:"#eab308"}},"F"+s.bf)),
+            React.createElement("span",null,"Now: ",React.createElement("span",{className:"m",style:{color:ac}},"F"+Math.max(0,run.f-1)))
+          )
+        ),
+        // Phase
+        React.createElement("div",{style:{display:"flex",gap:5,marginBottom:8,flexWrap:"wrap"}},
+          phases.map(function(p){return React.createElement("button",{key:p.id,style:{padding:"7px 12px",borderRadius:8,border:"1px solid "+(s.phase===p.id?p.c:"rgba(255,255,255,.06)"),background:s.phase===p.id?p.c:"transparent",color:s.phase===p.id?"#000":"#555",cursor:"pointer",fontSize:11,fontWeight:600,fontFamily:"inherit"},onClick:function(){up(function(pp){return Object.assign({},pp,{phase:p.id})})}},p.i+" "+p.n)}),
+          React.createElement("button",{style:{padding:"7px 8px",borderRadius:8,border:"1px solid rgba(255,255,255,.06)",background:"transparent",color:"#444",cursor:"pointer",fontSize:10},onClick:function(){sMod("phases")}},"⚙️")
+        ),
+        // Rent
+        s.phase==="grind"&&React.createElement("div",{style:{background:"rgba(255,255,255,.025)",border:"1px solid "+(rdd?"rgba(74,222,128,.15)":"rgba(239,68,68,.08)"),borderRadius:16,padding:14,marginBottom:10}},
+          React.createElement("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:6}},React.createElement("div",{style:{display:"flex",alignItems:"center",gap:6}},React.createElement("span",{style:{fontSize:12,fontWeight:800,color:rdd?"#4ade80":"#ef4444"}},rdd?"👑 RENT SLAIN":"👹 Rent Boss"),React.createElement("button",{style:{background:"none",border:"none",color:"#444",cursor:"pointer",fontSize:10},onClick:function(){sRentInp({daily:String(s.rent||590),weekly:String(s.whp||4130)});sMod("rentcfg")}},"⚙️")),!rdd&&React.createElement("span",{className:"m",style:{fontSize:14,color:"#ef4444"}},"$"+rhp.toLocaleString())),
+          React.createElement("div",{style:{height:10,borderRadius:5,background:"rgba(255,255,255,.04)",overflow:"hidden",marginBottom:6}},React.createElement("div",{style:{height:"100%",width:(rhp/(s.whp||4130)*100)+"%",background:rdd?"#4ade80":"#ef4444"}})),
+          React.createElement("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center"}},React.createElement("span",{style:{fontSize:10,color:"#666"}},wkWork.length+"d this wk = $"+rd2.toLocaleString()),B({s:{fontSize:10,padding:"6px 10px",background:wkd?"rgba(255,255,255,.03)":"#eab308",color:wkd?"#e4e2df":"#000",borderColor:wkd?"rgba(255,255,255,.08)":"#eab308"},o:function(){sInp(wkd?String(te):"");sMod("taxi")},children:wkd?"Edit":"🚕 Log"}))
+        ),
+        // Today progress
+        React.createElement("div",{style:{background:"rgba(255,255,255,.025)",border:"1px solid rgba(255,255,255,.06)",borderRadius:16,padding:14,marginBottom:10}},
+          React.createElement("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:6}},
+            React.createElement("span",{style:{fontSize:13,fontWeight:700}},"Today ",React.createElement("span",{style:{fontSize:11,color:"#555"}},dn.length+"/"+ah.length)),
+            React.createElement("span",{className:"m",style:{fontSize:15,color:adn?"#4ade80":ac}},dxp,React.createElement("span",{style:{fontSize:10,color:"#555"}},"/"+mx))
+          ),
+          React.createElement("div",{style:{height:8,borderRadius:4,background:"rgba(255,255,255,.06)",overflow:"hidden"}},React.createElement("div",{style:{height:"100%",borderRadius:4,width:dp+"%",background:adn?"linear-gradient(90deg,#4ade80,#22d3ee)":ac,transition:"width .5s"}})),
+          debuffPct>0&&React.createElement("div",{className:"m",style:{fontSize:9,color:"#ef4444",marginTop:4}},"⚠️ Debuff: -"+Math.round(debuffPct*100)+"% DMG")
+        ),
+        // Bad day or habits
+        bd?React.createElement("div",{style:{background:"linear-gradient(135deg,rgba(220,38,38,.08),rgba(153,27,27,.04))",border:"1px solid rgba(220,38,38,.2)",borderRadius:16,padding:18,marginBottom:10,textAlign:"center"}},
+          React.createElement("div",{style:{fontSize:32,marginBottom:4}},"⚔️"),
+          React.createElement("div",{style:{fontSize:17,fontWeight:800,color:"#ef4444"}},"BAD DAY"),
+          React.createElement("div",{style:{fontSize:14,fontWeight:700}},bq.n),
+          React.createElement("div",{style:{background:"rgba(255,255,255,.03)",borderRadius:9,padding:12,margin:"10px 0"}},React.createElement("div",{style:{fontSize:13,fontWeight:600}},bq.q)),
+          React.createElement("div",{className:"m",style:{fontSize:11,color:"#eab308",marginBottom:8}},"+"+bq.xp+" dmg"),
+          React.createElement("div",{style:{display:"flex",gap:6,justifyContent:"center"}},B({o:function(){sBd(false)},children:"Back"}),B({s:{background:"linear-gradient(135deg,#dc2626,#991b1b)",color:"white",borderColor:"#dc2626"},o:dBD,children:"✓ Done"}))
+        )
+        :React.createElement(React.Fragment,null,
+          // Habits list
+          React.createElement("div",{style:{background:"rgba(255,255,255,.025)",border:"1px solid rgba(255,255,255,.06)",borderRadius:16,padding:14,marginBottom:10}},
+            React.createElement("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}},
+              React.createElement("span",{style:{fontSize:13,fontWeight:700}},j1?"🎯 One":"Moves"),
+              B({s:{fontSize:10,padding:"4px 8px"},o:function(){sJ1(!j1)},children:j1?"All":"🎯"})
+            ),
+            (j1?[ah.find(function(h){return dn.indexOf(h.id)<0&&!h.isPlan})||ah[0]]:ah).filter(Boolean).map(function(h){
+              var d2=dn.indexOf(h.id)>=0,md2=s.md[h.id]||0,rk=gRk(md2);
+              var isP=h.isPlan,isB=false;for(var pi=0;pi<pl.length;pi++)if(pl[pi].id===h.id)isB=true;
+              var isM=s.mset.indexOf(h.id)>=0,r2=rx(h);
+              var mt=MT[h.tp||"atk"]||MT.atk;
+              var isDef=h.tp==="def"&&h.st===cf.defSt&&!acl;
+              return React.createElement("div",{key:h.id,style:{display:"flex",alignItems:"center",gap:10,padding:11,borderRadius:11,cursor:"pointer",marginBottom:2,background:d2?"rgba(74,222,128,.06)":isDef?"rgba(59,130,246,.04)":"transparent",border:"1px solid "+(d2?"rgba(74,222,128,.12)":isDef?"rgba(59,130,246,.15)":"transparent"),borderLeft:isM?"3px solid #818cf8":isDef&&!d2?"3px solid #3b82f6":"1px solid transparent",position:"relative"},onClick:function(){tog(h.id)}},
+                React.createElement("div",{style:{width:26,height:26,borderRadius:7,border:"2px solid "+(d2?"#4ade80":"rgba(255,255,255,.15)"),background:d2?"#4ade80":"transparent",display:"flex",alignItems:"center",justifyContent:"center",color:"#000",fontSize:13,flexShrink:0}},d2?"✓":""),
+                React.createElement("span",{style:{fontSize:17}},h.ic),
+                React.createElement("div",{style:{flex:1,minWidth:0}},
+                  React.createElement("div",{style:{fontWeight:600,fontSize:13,opacity:d2?0.4:1,textDecoration:d2?"line-through":"none"}},h.n),
+                  React.createElement("div",{style:{display:"flex",gap:4,alignItems:"center",marginTop:1,flexWrap:"wrap"}},
+                    React.createElement("span",{className:"m",style:{fontSize:10,color:"#ef4444"}},"⚔️"+r2),
+                    React.createElement("span",{style:{fontSize:8,color:mt.c,fontWeight:700,background:mt.c+"15",padding:"1px 4px",borderRadius:3}},mt.i),
+                    !isP&&!isB&&React.createElement("span",{className:"m",style:{fontSize:8,color:rk.c}},rk.n),
+                    isDef&&!d2&&React.createElement("span",{style:{fontSize:8,color:"#3b82f6",fontWeight:700}},"🛡️DEF"),
+                    isM&&React.createElement("span",{style:{fontSize:8,color:"#818cf8",fontWeight:700}},"★")
+                  )
+                ),
+                pop&&pop.id===h.id&&React.createElement("div",{style:{position:"absolute",right:14,top:"50%",color:"#ef4444",fontWeight:800,fontSize:14,fontFamily:"'JetBrains Mono',monospace",animation:"xf 1s forwards",pointerEvents:"none",transform:"translateY(-50%)"}},"-"+pop.a)
+              )
+            })
+          ),
+          React.createElement("div",{style:{display:"flex",gap:6,marginBottom:8}},
+            B({s:{flex:1,fontSize:12},o:function(){sInp("");sMod("impulse")},children:"⚡ Impulse"}),
+            B({s:{flex:1,fontSize:12,background:"linear-gradient(135deg,#dc2626,#991b1b)",color:"white",borderColor:"#dc2626"},o:function(){sBd(true)},children:"⚔️ Bad Day"})
+          )
+        ),
+        // Fuel
+        React.createElement("div",{style:{background:"rgba(255,255,255,.025)",border:"1px solid rgba(255,255,255,.06)",borderRadius:16,padding:14,marginBottom:10}},
+          React.createElement("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:5}},React.createElement("span",{style:{fontSize:13,fontWeight:700}},"⛽ Freedom Fuel"),B({s:{fontSize:10,padding:"4px 8px"},o:function(){sInp("");sMod("cre")},children:"🎨 +"})),
+          React.createElement("div",{className:"m",style:{fontSize:22,color:fr.c,marginBottom:8}},"$"+s.fuel.toLocaleString()),
+          React.createElement("div",{style:{display:"flex",gap:6,marginBottom:8}},
+            React.createElement("div",{style:{flex:1,background:"rgba(234,179,8,.04)",borderRadius:8,padding:"7px 9px"}},React.createElement("div",{style:{fontSize:8,color:"#eab308",fontWeight:700,textTransform:"uppercase"}},"🚕 Taxi"),React.createElement("div",{className:"m",style:{fontSize:14,color:"#eab308"}},"$"+s.taxi.toLocaleString())),
+            React.createElement("div",{style:{flex:1,background:"rgba(168,85,247,.04)",borderRadius:8,padding:"7px 9px"}},React.createElement("div",{style:{fontSize:8,color:"#a855f7",fontWeight:700,textTransform:"uppercase"}},"🎨 Creative"),React.createElement("div",{className:"m",style:{fontSize:14,color:"#a855f7"}},"$"+s.cre.toLocaleString()))
+          ),
+          nfr&&React.createElement("div",{style:{height:8,borderRadius:4,background:"rgba(255,255,255,.06)",overflow:"hidden"}},React.createElement("div",{style:{height:"100%",borderRadius:4,width:Math.min(((s.fuel-fr.a)/(nfr.a-fr.a))*100,100)+"%",background:"linear-gradient(90deg,"+fr.c+","+nfr.c+")"}})),
+          React.createElement("div",{style:{display:"flex",justifyContent:"space-between",marginTop:3}},React.createElement("span",{className:"m",style:{fontSize:10,color:fr.c}},fr.i+" "+fr.n),nfr&&React.createElement("span",{className:"m",style:{fontSize:9,color:"#555"}},nfr.n+"@$"+nfr.a.toLocaleString()))
+        )
+      ),
+      // ═══ MOVES ═══
+      vw==="moves"&&React.createElement(React.Fragment,null,
+        React.createElement("h2",{style:{fontSize:20,fontWeight:800,marginBottom:3}},"⚔️ Moves"),
+        React.createElement("p",{style:{fontSize:11,color:"#666",marginBottom:12}},"Your arsenal. Tap to edit."),
+        Object.keys(MT).map(function(tpKey){
+          var mt=MT[tpKey];var moves=bh.filter(function(h){return(h.tp||"atk")===tpKey});
           if(moves.length===0)return null;
-          return <div key={tpKey} style={{marginBottom:14}}>
-            <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:6}}><span style={{fontSize:14}}>{mt.i}</span><span style={{fontSize:12,fontWeight:700,color:mt.c}}>{mt.n} Moves</span><span style={{fontSize:10,color:"#555"}}>{mt.d}</span></div>
-            {moves.map(function(h){var md2=s.md[h.id]||0,rk=gRk(md2),nx=gNR(md2),isM=s.mset.indexOf(h.id)>=0;
-              return <div key={h.id} style={{display:"flex",alignItems:"center",gap:10,padding:12,borderRadius:12,background:"rgba(255,255,255,.025)",border:"1px solid "+(isM?"rgba(129,140,248,.15)":"rgba(255,255,255,.06)"),marginBottom:5,cursor:"pointer",borderLeft:"3px solid "+mt.c}} onClick={function(){oEdit(h)}}>
-                <span style={{fontSize:22}}>{h.ic}</span>
-                <div style={{flex:1}}>
-                  <div style={{fontWeight:700,fontSize:13}}>{h.n}</div>
-                  <div style={{fontSize:10,color:"#888",marginBottom:2}}>{h.desc}</div>
-                  <div style={{display:"flex",gap:5,alignItems:"center",flexWrap:"wrap"}}>
-                    <span className="m" style={{fontSize:10,color:"#ef4444"}}>⚔️{h.xp}</span>
-                    <span className="m" style={{fontSize:9,color:rk.c,background:rk.c+"20",padding:"1px 5px",borderRadius:3}}>{rk.n}</span>
-                    <span style={{fontSize:9,color:"#555"}}>{md2}d</span>
-                    {isM&&<span style={{fontSize:8,color:"#818cf8",fontWeight:700}}>★MASTERY</span>}
-                    {nx&&<span style={{fontSize:8,color:"#444"}}>→{nx.n} {nx.t-md2}d</span>}
-                  </div>
-                </div>
-                <span style={{fontSize:11,color:"#333"}}>✏️</span>
-              </div>})}
-          </div>})}
-        <button style={{width:"100%",padding:12,borderRadius:12,border:"1px dashed rgba(255,255,255,.1)",background:"rgba(255,255,255,.02)",color:"#666",cursor:"pointer",fontSize:13,fontWeight:600,fontFamily:"inherit"}} onClick={oAdd}>+ New Move</button>
-      </>}
-      {/* MASTERY */}
-      {vw==="mastery"&&<><h2 style={{fontSize:20,fontWeight:800,marginBottom:3}}>Mastery</h2><p style={{fontSize:11,color:"#666",marginBottom:12}}>⭐ = promote.</p>
-        {allMoves.map(function(h){var d2=s.md[h.id]||0,r=gRk(d2),nx=gNR(d2),pg=nx?((d2-r.t)/(nx.t-r.t))*100:100,isM=s.mset.indexOf(h.id)>=0;
-          return(<div key={h.id} style={{background:"rgba(255,255,255,.025)",border:"1px solid "+(isM?"rgba(129,140,248,.15)":"rgba(255,255,255,.06)"),borderRadius:16,padding:13,marginBottom:7}}>
-            <div style={{display:"flex",alignItems:"center",gap:10}}>
-              <span style={{fontSize:22}}>{h.ic}</span>
-              <div style={{flex:1}}>
-                <div style={{display:"flex",alignItems:"center",gap:5}}><span style={{fontWeight:700,fontSize:12}}>{h.n}</span>{isM&&<span style={{fontSize:8,color:"#818cf8",fontWeight:700,background:"rgba(129,140,248,.1)",padding:"2px 5px",borderRadius:3}}>MASTERY</span>}</div>
-                <div style={{display:"flex",alignItems:"center",gap:6,margin:"3px 0"}}><span className="m" style={{fontSize:10,color:r.c,background:r.c+"20",padding:"2px 6px",borderRadius:4}}>{r.n}</span><span className="m" style={{fontSize:10,color:"#555"}}>{d2}d</span>{nx&&<span style={{fontSize:9,color:"#444"}}>→{nx.n} {nx.t-d2}d</span>}</div>
-                <div style={{height:5,borderRadius:3,background:"rgba(255,255,255,.06)",overflow:"hidden"}}><div style={{height:"100%",borderRadius:3,width:pg+"%",background:isM?"#818cf8":r.c}}/></div>
-              </div>
-              <button style={{background:isM?"rgba(129,140,248,.15)":"rgba(255,255,255,.03)",border:"1px solid "+(isM?"rgba(129,140,248,.3)":"rgba(255,255,255,.08)"),borderRadius:7,width:34,height:34,cursor:"pointer",fontSize:15,display:"flex",alignItems:"center",justifyContent:"center"}} onClick={function(){tgM(h.id)}}>{isM?"⭐":"☆"}</button>
-            </div>
-          </div>)})}</>}
-      {/* STATS */}
-      {vw==="stats"&&<><h2 style={{fontSize:20,fontWeight:800,marginBottom:12}}>Character</h2>
-        <div style={{display:"flex",gap:8,marginBottom:10}}>
-          <div style={{flex:1,background:"rgba(255,255,255,.025)",border:"1px solid rgba(255,255,255,.06)",borderRadius:16,padding:14,textAlign:"center"}}><div style={{fontSize:32}}>{s.streak>0?"🔥":"💤"}</div><div style={{fontSize:32,fontWeight:900}}>{s.streak}</div><div style={{fontSize:9,color:"#777",fontWeight:600,textTransform:"uppercase"}}>streak</div></div>
-          <div style={{flex:1,background:"rgba(255,255,255,.025)",border:"1px solid rgba(255,255,255,.06)",borderRadius:16,padding:14,textAlign:"center"}}><div style={{fontSize:32}}>⚔️</div><div style={{fontSize:24,fontWeight:900,color:"#ef4444"}}>{s.txp.toLocaleString()}</div><div style={{fontSize:9,color:"#777",fontWeight:600,textTransform:"uppercase"}}>total dmg</div></div>
-        </div>
-        <div style={{background:"rgba(255,255,255,.025)",border:"1px solid rgba(255,255,255,.06)",borderRadius:16,padding:18,marginBottom:10}}>
-          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}><span style={{fontSize:13,fontWeight:700}}>📊 Stats</span>{usp>0&&<span className="m" style={{fontSize:10,color:"#4ade80",background:"rgba(74,222,128,.15)",padding:"2px 6px",borderRadius:4}}>{usp}pts</span>}</div>
-          <div style={{fontSize:10,color:"#555",marginBottom:8}}>+2pts/250dmg. +5% dmg + 1% boss resist each.</div>
-          {SDS.map(function(st){return(<div key={st.k} style={{display:"flex",alignItems:"center",gap:8,padding:"8px 10px",borderRadius:9,background:"rgba(255,255,255,.02)",marginBottom:5,border:"1px solid rgba(255,255,255,.04)"}}>
-            <span style={{fontSize:16}}>{st.i}</span>
-            <div style={{flex:1}}><div style={{display:"flex",justifyContent:"space-between"}}><span style={{fontSize:11,fontWeight:700,color:st.c}}>{st.n}</span><span className="m" style={{fontSize:13,color:st.c}}>{s.stats[st.k]||0}</span></div><div style={{fontSize:9,color:"#555"}}>+{(s.stats[st.k]||0)*5}% dmg · {(s.stats[st.k]||0)}% resist</div></div>
-            <button style={{width:30,height:30,borderRadius:7,border:"1px solid rgba(255,255,255,.1)",background:"rgba(255,255,255,.03)",color:"#e4e2df",cursor:usp>0?"pointer":"default",fontSize:15,display:"flex",alignItems:"center",justifyContent:"center",fontWeight:700,opacity:usp>0?1:0.2}} onClick={function(){alS(st.k)}}>+</button>
-          </div>)})}
-        </div>
-        <div style={{background:"rgba(255,255,255,.025)",border:"1px solid rgba(255,255,255,.06)",borderRadius:16,padding:18,marginBottom:10}}>
-          <div style={{fontSize:13,fontWeight:700,marginBottom:8}}>🗺️ Runs</div>
-          <div style={{display:"flex",justifyContent:"space-between",padding:"5px 0"}}><span style={{fontSize:12,color:"#777"}}>Best</span><span className="m" style={{fontSize:14,color:"#eab308"}}>F{s.bf}</span></div>
-          {rh.map(function(e){return(<div key={e[0]} style={{display:"flex",alignItems:"center",gap:8,padding:"6px 0",borderTop:"1px solid rgba(255,255,255,.03)"}}>
-            <span className="m" style={{fontSize:10,color:"#666",width:65}}>{e[0]}</span>
-            <div style={{flex:1,display:"flex",gap:2}}>{FL.map(function(f,i){return <div key={i} style={{width:16,height:16,borderRadius:3,background:e[1].cl.indexOf(f.f)>=0?"#4ade80":"rgba(255,255,255,.04)",fontSize:7,display:"flex",alignItems:"center",justifyContent:"center",color:e[1].cl.indexOf(f.f)>=0?"#000":"#555",fontWeight:700}}>{f.f}</div>})}</div>
-            <span className="m" style={{fontSize:10,color:"#4ade80"}}>F{Math.max(0,e[1].f-1)}</span>
-          </div>)})}
-        </div>
-        {/* GOD */}
-        <div style={{textAlign:"center",marginTop:14}}><button style={{background:"none",border:"none",color:"#222",cursor:"pointer",fontSize:9,fontFamily:"'JetBrains Mono',monospace"}} onClick={function(){sGm(!gm)}}>{gm?"Hide":"🔧 Dev"}</button></div>
-        {gm&&<div style={{background:"rgba(234,179,8,.03)",border:"1px solid rgba(234,179,8,.15)",borderRadius:16,padding:18,marginTop:6}}>
-          <div style={{fontSize:12,fontWeight:800,color:"#eab308",marginBottom:8}}>⚡ God Mode</div>
-          <div style={{display:"flex",flexDirection:"column",gap:5}}>
-            <div style={{display:"flex",gap:4}}>
-              <button style={{flex:1,padding:7,borderRadius:8,border:"1px solid rgba(255,255,255,.08)",background:"rgba(255,255,255,.03)",color:"#e4e2df",cursor:"pointer",fontSize:10,fontFamily:"inherit"}} onClick={function(){sDof(function(d){return d+1})}}>→Day</button>
-              <button style={{flex:1,padding:7,borderRadius:8,border:"1px solid rgba(255,255,255,.08)",background:"rgba(255,255,255,.03)",color:"#e4e2df",cursor:"pointer",fontSize:10,fontFamily:"inherit"}} onClick={function(){sDof(function(d){return Math.max(0,d-1)})}}>←Day</button>
-              <button style={{flex:1,padding:7,borderRadius:8,border:"1px solid rgba(255,255,255,.08)",background:"rgba(255,255,255,.03)",color:"#e4e2df",cursor:"pointer",fontSize:10,fontFamily:"inherit"}} onClick={function(){sDof(0)}}>Reset</button>
-            </div>
-            <button style={{padding:7,borderRadius:8,border:"1px solid rgba(255,255,255,.08)",background:"rgba(255,255,255,.03)",color:"#e4e2df",cursor:"pointer",fontSize:10,fontFamily:"inherit"}} onClick={function(){var ids=[],td2=0;for(var i=0;i<ah.length;i++)if(!ah[i].isPlan){ids.push(ah[i].id);td2+=rx(ah[i])}up(function(p){var nm=Object.assign({},p.md),c=Object.assign({},p.comp);for(var j=0;j<ids.length;j++)nm[ids[j]]=(nm[ids[j]]||0)+1;c[td]=ids;var nd=Object.assign({},p.defended);nd[td]=true;return Object.assign({},p,{comp:c,txp:p.txp+td2+defBonus,streak:p.streak+1,md:nm,defended:nd,lastDay:td,lastWeek:wk})});ddm(ah.filter(function(h){return!h.isPlan}).reduce(function(a,h){return a+rx(h)},0)+defBonus);pt("✓ Done!","")}}>✓ Complete All</button>
-            <button style={{padding:7,borderRadius:8,border:"1px solid rgba(255,255,255,.08)",background:"rgba(255,255,255,.03)",color:"#e4e2df",cursor:"pointer",fontSize:10,fontFamily:"inherit"}} onClick={function(){ddm(500);up(function(p){return Object.assign({},p,{txp:p.txp+500})});pt("+500","")}}>+500 DMG</button>
-            <button style={{padding:7,borderRadius:8,border:"1px solid rgba(255,255,255,.08)",background:"rgba(255,255,255,.03)",color:"#e4e2df",cursor:"pointer",fontSize:10,fontFamily:"inherit"}} onClick={function(){up(function(p){var nm=Object.assign({},p.md);for(var i=0;i<bh.length;i++)nm[bh[i].id]=(nm[bh[i].id]||0)+30;return Object.assign({},p,{md:nm})});pt("+30 Mastery","")}}>+30 Mastery</button>
-            <button style={{padding:7,borderRadius:8,border:"1px solid rgba(255,255,255,.08)",background:"rgba(255,255,255,.03)",color:"#e4e2df",cursor:"pointer",fontSize:10,fontFamily:"inherit"}} onClick={function(){up(function(p){return Object.assign({},p,{fuel:p.fuel+10000,taxi:p.taxi+10000})});pt("+$10k","")}}>+$10k Fuel</button>
-            <button style={{padding:7,borderRadius:8,border:"1px solid rgba(239,68,68,.2)",background:"rgba(255,255,255,.03)",color:"#ef4444",cursor:"pointer",fontSize:10,fontFamily:"inherit"}} onClick={function(){ss(I0);sDof(0);pt("Reset","")}}>⚠️ Reset</button>
-            <div className="m" style={{fontSize:9,color:"#444"}}>{td}|{wk}|F{run.f}|D{run.d}|Def:{defended?"Y":"N"}</div>
-          </div>
-        </div>}
-      </>}
-      </div>
-      {/* MODALS */}
-      {mod==="edit"&&<div className="mb" onClick={function(){sMod(null)}}><div className="md" onClick={function(e){e.stopPropagation()}}>
-        <h3 style={{fontSize:17,fontWeight:800,marginBottom:10}}>{ef.isNew?"New Move":"Edit Move"}</h3>
-        <div style={{fontSize:10,color:"#888",fontWeight:600,marginBottom:4}}>MOVE NAME</div>
-        <input className="inp" value={ef.n} onChange={function(e){sEf(Object.assign({},ef,{n:e.target.value}))}} placeholder="e.g. Morning Strike" autoFocus style={{marginBottom:8}}/>
-        <div style={{fontSize:10,color:"#888",fontWeight:600,marginBottom:4}}>DESCRIPTION</div>
-        <input className="inp" value={ef.desc} onChange={function(e){sEf(Object.assign({},ef,{desc:e.target.value}))}} placeholder="e.g. Wake by 10am" style={{marginBottom:8,fontSize:13}}/>
-        <div style={{fontSize:10,color:"#888",fontWeight:600,marginBottom:4}}>MOVE TYPE</div>
-        <div style={{display:"flex",gap:4,marginBottom:8,flexWrap:"wrap"}}>{Object.keys(MOVE_TYPES).map(function(k){var mt=MOVE_TYPES[k];return <button key={k} style={{padding:"5px 10px",borderRadius:7,border:"1px solid "+(ef.tp===k?mt.c:"rgba(255,255,255,.08)"),color:ef.tp===k?mt.c:"#777",background:ef.tp===k?mt.c+"15":"transparent",cursor:"pointer",fontSize:11,fontWeight:600,fontFamily:"'JetBrains Mono',monospace"}} onClick={function(){sEf(Object.assign({},ef,{tp:k}))}}>{mt.i} {mt.n}</button>})}</div>
-        <div style={{fontSize:10,color:"#888",fontWeight:600,marginBottom:4}}>PHASES</div>
-        <div style={{display:"flex",gap:4,marginBottom:8,flexWrap:"wrap"}}>{phases.map(function(p){var sel=ef.phs&&ef.phs.indexOf(p.id)>=0;return <button key={p.id} style={{padding:"5px 10px",borderRadius:7,border:"1px solid "+(sel?p.c:"rgba(255,255,255,.08)"),color:sel?p.c:"#777",background:sel?p.c+"15":"transparent",cursor:"pointer",fontSize:11,fontWeight:600,fontFamily:"'JetBrains Mono',monospace"}} onClick={function(){sEf(function(prev){var cur=prev.phs||[];var has=cur.indexOf(p.id)>=0;var next=has?cur.filter(function(x){return x!==p.id}):cur.concat([p.id]);if(next.length===0)next=[p.id];return Object.assign({},prev,{phs:next})})}}>{p.i} {p.n}</button>})}</div>
-        <div style={{fontSize:10,color:"#888",fontWeight:600,marginBottom:4}}>DMG</div>
-        <div style={{display:"flex",gap:4,marginBottom:8,flexWrap:"wrap"}}>{[5,10,15,20,25,30,40,50].map(function(v){return <button key={v} style={{padding:"5px 10px",borderRadius:7,border:"1px solid "+(ef.xp===v?"#4ade80":"rgba(255,255,255,.08)"),background:ef.xp===v?"rgba(74,222,128,.08)":"transparent",color:ef.xp===v?"#4ade80":"#777",cursor:"pointer",fontSize:12,fontWeight:600,fontFamily:"'JetBrains Mono',monospace"}} onClick={function(){sEf(Object.assign({},ef,{xp:v}))}}>{v}</button>})}</div>
-        <div style={{fontSize:10,color:"#888",fontWeight:600,marginBottom:4}}>STAT</div>
-        <div style={{display:"flex",gap:4,marginBottom:8,flexWrap:"wrap"}}>{SDS.map(function(st){return <button key={st.k} style={{padding:"5px 10px",borderRadius:7,border:"1px solid "+(ef.st===st.k?st.c:"rgba(255,255,255,.08)"),color:ef.st===st.k?st.c:"#777",background:"transparent",cursor:"pointer",fontSize:12,fontWeight:600,fontFamily:"'JetBrains Mono',monospace"}} onClick={function(){sEf(Object.assign({},ef,{st:st.k}))}}>{st.i}{st.k}</button>})}</div>
-        <div style={{fontSize:10,color:"#888",fontWeight:600,marginBottom:4}}>ICON</div>
-        <div style={{display:"flex",flexWrap:"wrap",gap:3,marginBottom:14}}>{IC.map(function(ic){return <button key={ic} style={{width:32,height:32,borderRadius:7,border:"2px solid "+(ef.ic===ic?"#4ade80":"transparent"),background:ef.ic===ic?"rgba(74,222,128,.1)":"rgba(255,255,255,.03)",cursor:"pointer",fontSize:16,display:"flex",alignItems:"center",justifyContent:"center"}} onClick={function(){sEf(Object.assign({},ef,{ic:ic}))}}>{ic}</button>})}</div>
-        <div style={{display:"flex",gap:5}}>
-          {!ef.isNew&&<button style={{padding:"9px 15px",borderRadius:10,border:"1px solid rgba(239,68,68,.2)",background:"rgba(255,255,255,.03)",color:"#ef4444",cursor:"pointer",fontSize:13,fontWeight:600,fontFamily:"inherit"}} onClick={dlH}>Del</button>}
-          <div style={{flex:1}}/>
-          <button style={{padding:"9px 15px",borderRadius:10,border:"1px solid rgba(255,255,255,.08)",background:"rgba(255,255,255,.03)",color:"#e4e2df",cursor:"pointer",fontSize:13,fontWeight:600,fontFamily:"inherit"}} onClick={function(){sMod(null)}}>Cancel</button>
-          <button style={{padding:"9px 15px",borderRadius:10,border:"1px solid #4ade80",background:"#4ade80",color:"#000",cursor:"pointer",fontSize:13,fontWeight:700,fontFamily:"inherit"}} onClick={svEdit}>{ef.isNew?"Create":"Save"}</button>
-        </div>
-      </div></div>}
-      {mod==="plan"&&<div className="mb" onClick={function(){sMod(null)}}><div className="md" onClick={function(e){e.stopPropagation()}}>
-        <h3 style={{fontSize:17,fontWeight:800,marginBottom:3}}>📋 Plan Tomorrow</h3>
-        <p style={{fontSize:11,color:"#777",marginBottom:12}}>Bonus dmg tomorrow.</p>
-        {(s.tp[tm]||[]).map(function(t){return <div key={t.id} style={{display:"flex",alignItems:"center",gap:10,padding:9,borderRadius:10,border:"1px solid rgba(74,222,128,.1)",background:"rgba(74,222,128,.03)",marginBottom:5}}><span style={{fontSize:15}}>{t.ic}</span><div style={{flex:1,fontWeight:600,fontSize:11}}>{t.n}</div><button style={{background:"none",border:"none",color:"#ef4444",cursor:"pointer",fontSize:12}} onClick={function(){rPT(t.id)}}>✕</button></div>})}
-        {s.tl.filter(function(t){var ip=false;(s.tp[tm]||[]).forEach(function(p){if(p.n===t.n)ip=true});return !ip}).map(function(t){return <div key={t.id||t.n} style={{display:"flex",alignItems:"center",gap:10,padding:9,borderRadius:10,border:"1px solid rgba(255,255,255,.04)",marginBottom:5,cursor:"pointer"}} onClick={function(){aPT(Object.assign({},t,{id:ni()}))}}><span style={{fontSize:15}}>{t.ic}</span><div style={{flex:1,fontWeight:600,fontSize:11}}>{t.n}</div><span style={{color:"#4ade80",fontSize:11,fontWeight:700}}>+</span></div>})}
-        <button style={{width:"100%",padding:9,borderRadius:10,border:"1px solid rgba(255,255,255,.08)",background:"rgba(255,255,255,.03)",color:"#e4e2df",cursor:"pointer",fontSize:12,fontWeight:600,fontFamily:"inherit",marginBottom:8,marginTop:6}} onClick={function(){sNtk({n:"",xp:15,ic:"🎯"});sMod("ntk")}}>+ New</button>
-        <div style={{display:"flex",gap:5}}><button style={{flex:1,padding:9,borderRadius:10,border:"1px solid rgba(255,255,255,.08)",background:"rgba(255,255,255,.03)",color:"#e4e2df",cursor:"pointer",fontSize:13,fontWeight:600,fontFamily:"inherit"}} onClick={function(){sMod(null)}}>Cancel</button><button style={{flex:1,padding:9,borderRadius:10,border:"1px solid #4ade80",background:"#4ade80",color:"#000",cursor:"pointer",fontSize:13,fontWeight:700,fontFamily:"inherit"}} onClick={cPlan}>✓ Lock</button></div>
-      </div></div>}
-      {mod==="ntk"&&<div className="mb" style={{zIndex:950}} onClick={function(){sMod("plan")}}><div className="md" onClick={function(e){e.stopPropagation()}}><h3 style={{fontSize:15,fontWeight:800,marginBottom:8}}>New Task</h3><input className="inp" value={ntk.n} onChange={function(e){sNtk(Object.assign({},ntk,{n:e.target.value}))}} placeholder="e.g. Record podcast" autoFocus style={{marginBottom:8}}/><div style={{display:"flex",gap:4,marginBottom:8,flexWrap:"wrap"}}>{[5,10,15,20,25].map(function(v){return <button key={v} style={{padding:"5px 10px",borderRadius:7,border:"1px solid "+(ntk.xp===v?"#4ade80":"rgba(255,255,255,.08)"),color:ntk.xp===v?"#4ade80":"#777",background:ntk.xp===v?"rgba(74,222,128,.08)":"transparent",cursor:"pointer",fontSize:12,fontWeight:600,fontFamily:"'JetBrains Mono',monospace"}} onClick={function(){sNtk(Object.assign({},ntk,{xp:v}))}}>{v}</button>})}</div><div style={{display:"flex",flexWrap:"wrap",gap:3,marginBottom:12}}>{IC.slice(0,15).map(function(ic){return <button key={ic} style={{width:32,height:32,borderRadius:7,border:"2px solid "+(ntk.ic===ic?"#4ade80":"transparent"),background:ntk.ic===ic?"rgba(74,222,128,.1)":"rgba(255,255,255,.03)",cursor:"pointer",fontSize:16,display:"flex",alignItems:"center",justifyContent:"center"}} onClick={function(){sNtk(Object.assign({},ntk,{ic:ic}))}}>{ic}</button>})}</div><div style={{display:"flex",gap:5}}><button style={{flex:1,padding:9,borderRadius:10,border:"1px solid rgba(255,255,255,.08)",background:"rgba(255,255,255,.03)",color:"#e4e2df",cursor:"pointer",fontSize:13,fontWeight:600,fontFamily:"inherit"}} onClick={function(){sMod("plan")}}>Back</button><button style={{flex:1,padding:9,borderRadius:10,border:"1px solid #4ade80",background:"#4ade80",color:"#000",cursor:"pointer",fontSize:13,fontWeight:700,fontFamily:"inherit"}} onClick={function(){if(!ntk.n.trim())return;var t={id:ni(),n:ntk.n.trim(),xp:ntk.xp,ic:ntk.ic,st:"DIS"};aPT(t);sLib(t);sMod("plan")}}>Add</button></div></div></div>}
-      {mod==="taxi"&&<div className="mb" onClick={function(){sMod(null)}}><div className="md" onClick={function(e){e.stopPropagation()}}><h3 style={{fontSize:17,fontWeight:800,marginBottom:4}}>🚕 Taxi</h3><p style={{fontSize:11,color:"#777",marginBottom:10}}>Net after LPG.</p><input className="inp" type="number" value={inp} onChange={function(e){sInp(e.target.value)}} placeholder="Net HKD" autoFocus style={{marginBottom:10,fontSize:20,fontFamily:"'JetBrains Mono',monospace",textAlign:"center"}}/><div style={{display:"flex",gap:5}}><button style={{flex:1,padding:9,borderRadius:10,border:"1px solid rgba(255,255,255,.08)",background:"rgba(255,255,255,.03)",color:"#e4e2df",cursor:"pointer",fontSize:13,fontWeight:600,fontFamily:"inherit"}} onClick={function(){sMod(null)}}>Cancel</button><button style={{flex:1,padding:9,borderRadius:10,border:"1px solid #eab308",background:"#eab308",color:"#000",cursor:"pointer",fontSize:13,fontWeight:700,fontFamily:"inherit"}} onClick={lTaxi}>⚔️ Log</button></div></div></div>}
-      {mod==="cre"&&<div className="mb" onClick={function(){sMod(null)}}><div className="md" onClick={function(e){e.stopPropagation()}}><h3 style={{fontSize:17,fontWeight:800,marginBottom:4}}>🎨 Creative Gold</h3><input className="inp" type="number" value={inp} onChange={function(e){sInp(e.target.value)}} placeholder="HKD" autoFocus style={{marginBottom:10,fontSize:20,fontFamily:"'JetBrains Mono',monospace",textAlign:"center"}}/><div style={{display:"flex",gap:5}}><button style={{flex:1,padding:9,borderRadius:10,border:"1px solid rgba(255,255,255,.08)",background:"rgba(255,255,255,.03)",color:"#e4e2df",cursor:"pointer",fontSize:13,fontWeight:600,fontFamily:"inherit"}} onClick={function(){sMod(null)}}>Cancel</button><button style={{flex:1,padding:9,borderRadius:10,border:"1px solid #a855f7",background:"#a855f7",color:"#fff",cursor:"pointer",fontSize:13,fontWeight:700,fontFamily:"inherit"}} onClick={lCre}>🎨 Log</button></div></div></div>}
-      {mod==="impulse"&&<div className="mb" onClick={function(){sMod(null)}}><div className="md" onClick={function(e){e.stopPropagation()}}><h3 style={{fontSize:17,fontWeight:800,marginBottom:4}}>⚡ Impulse</h3><input className="inp" value={inp} onChange={function(e){sInp(e.target.value)}} placeholder="What?" autoFocus style={{marginBottom:10}}/><div style={{display:"flex",gap:5}}><button style={{flex:1,padding:9,borderRadius:10,border:"1px solid rgba(255,255,255,.08)",background:"rgba(255,255,255,.03)",color:"#e4e2df",cursor:"pointer",fontSize:13,fontWeight:600,fontFamily:"inherit"}} onClick={function(){sMod(null)}}>Cancel</button><button style={{flex:1,padding:9,borderRadius:10,border:"1px solid #4ade80",background:"#4ade80",color:"#000",cursor:"pointer",fontSize:13,fontWeight:700,fontFamily:"inherit"}} onClick={lImp}>⚡+15</button></div></div></div>}
-      {mod==="rentcfg"&&<div className="mb" onClick={function(){sMod(null)}}><div className="md" onClick={function(e){e.stopPropagation()}}>
-        <h3 style={{fontSize:17,fontWeight:800,marginBottom:4}}>⚙️ Rent Boss Settings</h3>
-        <p style={{fontSize:11,color:"#777",marginBottom:12}}>Customize your rent costs.</p>
-        <div style={{fontSize:10,color:"#888",fontWeight:600,marginBottom:4}}>DAILY RENT (per shift)</div>
-        <input className="inp" type="number" value={rentInp.daily} onChange={function(e){sRentInp(Object.assign({},rentInp,{daily:e.target.value}))}} placeholder="590" style={{marginBottom:10,fontSize:18,fontFamily:"'JetBrains Mono',monospace",textAlign:"center"}}/>
-        <div style={{fontSize:10,color:"#888",fontWeight:600,marginBottom:4}}>WEEKLY TARGET</div>
-        <input className="inp" type="number" value={rentInp.weekly} onChange={function(e){sRentInp(Object.assign({},rentInp,{monthly:e.target.value}))}} placeholder="4130" style={{marginBottom:10,fontSize:18,fontFamily:"'JetBrains Mono',monospace",textAlign:"center"}}/>
-        <div style={{fontSize:10,color:"#555",marginBottom:10}}>Need {Math.ceil((parseInt(rentInp.weekly)||4130)/(parseInt(rentInp.daily)||590))} shifts to slay the boss.</div>
-        <div style={{display:"flex",gap:5}}>
-          <button style={{flex:1,padding:9,borderRadius:10,border:"1px solid rgba(255,255,255,.08)",background:"rgba(255,255,255,.03)",color:"#e4e2df",cursor:"pointer",fontSize:13,fontWeight:600,fontFamily:"inherit"}} onClick={function(){sMod(null)}}>Cancel</button>
-          <button style={{flex:1,padding:9,borderRadius:10,border:"1px solid #4ade80",background:"#4ade80",color:"#000",cursor:"pointer",fontSize:13,fontWeight:700,fontFamily:"inherit"}} onClick={function(){var d=parseInt(rentInp.daily)||590,m=parseInt(rentInp.weekly)||4130;up(function(p){return Object.assign({},p,{rent:d,whp:m})});sMod(null);pt("⚙️ Updated","$"+d+"/day · $"+m+"/wk")}}>Save</button>
-        </div>
-      </div></div>}
-      {/* PHASES EDITOR */}
-      {mod==="phases"&&<div className="mb" onClick={function(){sMod(null)}}><div className="md" onClick={function(e){e.stopPropagation()}}>
-        <h3 style={{fontSize:17,fontWeight:800,marginBottom:10}}>⚙️ Edit Phases</h3>
-        <p style={{fontSize:11,color:"#777",marginBottom:12}}>Your day types. Tap to edit.</p>
-        {phases.map(function(p){return <div key={p.id} style={{display:"flex",alignItems:"center",gap:10,padding:10,borderRadius:10,border:"1px solid "+(s.phase===p.id?p.c+"33":"rgba(255,255,255,.06)"),background:"rgba(255,255,255,.02)",marginBottom:5,cursor:"pointer"}} onClick={function(){sPhEd(Object.assign({},p,{isNew:false}));sMod("phEdit")}}>
-          <span style={{fontSize:20}}>{p.i}</span>
-          <div style={{flex:1}}>
-            <div style={{fontWeight:700,fontSize:13,color:p.c}}>{p.n}</div>
-            <div style={{fontSize:10,color:"#555"}}>{allMoves.filter(function(m){return m.phs&&m.phs.indexOf(p.id)>=0}).length} moves</div>
-          </div>
-          <span style={{fontSize:11,color:"#333"}}>✏️</span>
-        </div>})}
-        <button style={{width:"100%",padding:12,borderRadius:12,border:"1px dashed rgba(255,255,255,.1)",background:"rgba(255,255,255,.02)",color:"#666",cursor:"pointer",fontSize:13,fontWeight:600,fontFamily:"inherit",marginTop:4}} onClick={function(){sPhEd({id:ni(),n:"",i:"⚡",c:"#f59e0b",isNew:true});sMod("phEdit")}}>+ New Phase</button>
-        <div style={{marginTop:10}}><button style={{width:"100%",padding:"9px 15px",borderRadius:10,border:"1px solid rgba(255,255,255,.08)",background:"rgba(255,255,255,.03)",color:"#e4e2df",cursor:"pointer",fontSize:13,fontWeight:600,fontFamily:"inherit"}} onClick={function(){sMod(null)}}>Done</button></div>
-      </div></div>}
-      {/* PHASE EDIT */}
-      {mod==="phEdit"&&phEd&&<div className="mb" style={{zIndex:950}} onClick={function(){sMod("phases")}}><div className="md" onClick={function(e){e.stopPropagation()}}>
-        <h3 style={{fontSize:17,fontWeight:800,marginBottom:10}}>{phEd.isNew?"New Phase":"Edit Phase"}</h3>
-        <div style={{fontSize:10,color:"#888",fontWeight:600,marginBottom:4}}>NAME</div>
-        <input className="inp" value={phEd.n} onChange={function(e){sPhEd(Object.assign({},phEd,{n:e.target.value}))}} placeholder="e.g. Rest Day" autoFocus style={{marginBottom:8}}/>
-        <div style={{fontSize:10,color:"#888",fontWeight:600,marginBottom:4}}>ICON</div>
-        <div style={{display:"flex",flexWrap:"wrap",gap:3,marginBottom:10}}>{IC.map(function(ic){return <button key={ic} style={{width:34,height:34,borderRadius:7,border:"2px solid "+(phEd.i===ic?"#4ade80":"transparent"),background:phEd.i===ic?"rgba(74,222,128,.1)":"rgba(255,255,255,.03)",cursor:"pointer",fontSize:16,display:"flex",alignItems:"center",justifyContent:"center"}} onClick={function(){sPhEd(Object.assign({},phEd,{i:ic}))}}>{ic}</button>})}</div>
-        <div style={{fontSize:10,color:"#888",fontWeight:600,marginBottom:4}}>COLOR</div>
-        <div style={{display:"flex",gap:4,marginBottom:12}}>
-          {["#f59e0b","#06b6d4","#a855f7","#ef4444","#4ade80","#f472b6","#3b82f6","#eab308"].map(function(c){return <button key={c} style={{width:30,height:30,borderRadius:7,background:c,border:phEd.c===c?"3px solid white":"3px solid transparent",cursor:"pointer"}} onClick={function(){sPhEd(Object.assign({},phEd,{c:c}))}}/>})}
-        </div>
-        <div style={{display:"flex",gap:5}}>
-          {!phEd.isNew&&phases.length>1&&<button style={{padding:"9px 15px",borderRadius:10,border:"1px solid rgba(239,68,68,.2)",background:"rgba(255,255,255,.03)",color:"#ef4444",cursor:"pointer",fontSize:13,fontWeight:600,fontFamily:"inherit"}} onClick={function(){var delId=phEd.id;up(function(p){var newMoves=(p.moves||[]).map(function(m){if(!m.phs)return m;var np=m.phs.filter(function(x){return x!==delId});return Object.assign({},m,{phs:np})}).filter(function(m){return m.phs&&m.phs.length>0});return Object.assign({},p,{phases:(p.phases||DEF_PHASES).filter(function(x){return x.id!==delId}),phase:p.phase===delId?(p.phases||DEF_PHASES).filter(function(x){return x.id!==delId})[0].id:p.phase,moves:newMoves})});sMod("phases")}}>Delete</button>}
-          <div style={{flex:1}}/>
-          <button style={{padding:"9px 15px",borderRadius:10,border:"1px solid rgba(255,255,255,.08)",background:"rgba(255,255,255,.03)",color:"#e4e2df",cursor:"pointer",fontSize:13,fontWeight:600,fontFamily:"inherit"}} onClick={function(){sMod("phases")}}>Cancel</button>
-          <button style={{padding:"9px 15px",borderRadius:10,border:"1px solid #4ade80",background:"#4ade80",color:"#000",cursor:"pointer",fontSize:13,fontWeight:700,fontFamily:"inherit"}} onClick={function(){if(!phEd.n.trim())return;if(phEd.isNew){up(function(p){return Object.assign({},p,{phases:(p.phases||DEF_PHASES).concat([{id:phEd.id,n:phEd.n.trim(),i:phEd.i,c:phEd.c}])})})}else{up(function(p){return Object.assign({},p,{phases:(p.phases||DEF_PHASES).map(function(x){return x.id===phEd.id?{id:x.id,n:phEd.n.trim(),i:phEd.i,c:phEd.c}:x})})})}sMod("phases")}}>{phEd.isNew?"Create":"Save"}</button>
-        </div>
-      </div></div>}
-      <div className="nv">
-        {[["home","🎮","Dungeon"],["moves","⚔️","Moves"],["mastery","🏆","Mastery"],["stats","📊","Stats"]].map(function(t){return <button key={t[0]} style={{flex:1,maxWidth:80,display:"flex",flexDirection:"column",alignItems:"center",gap:2,padding:7,border:"none",background:"none",color:vw===t[0]?ac:"#444",cursor:"pointer",fontSize:9,fontWeight:600,fontFamily:"inherit"}} onClick={function(){sVw(t[0])}}><span style={{fontSize:20}}>{t[1]}</span>{t[2]}</button>})}
-      </div>
-    </div>
+          return React.createElement("div",{key:tpKey,style:{marginBottom:14}},
+            React.createElement("div",{style:{display:"flex",alignItems:"center",gap:6,marginBottom:6}},React.createElement("span",{style:{fontSize:14}},mt.i),React.createElement("span",{style:{fontSize:12,fontWeight:700,color:mt.c}},mt.n)),
+            moves.map(function(h){var md2=s.md[h.id]||0,rk=gRk(md2),isM=s.mset.indexOf(h.id)>=0;
+              return React.createElement("div",{key:h.id,style:{display:"flex",alignItems:"center",gap:10,padding:12,borderRadius:12,background:"rgba(255,255,255,.025)",border:"1px solid rgba(255,255,255,.06)",marginBottom:5,cursor:"pointer",borderLeft:"3px solid "+mt.c},onClick:function(){oEdit(h)}},
+                React.createElement("span",{style:{fontSize:22}},h.ic),
+                React.createElement("div",{style:{flex:1}},
+                  React.createElement("div",{style:{fontWeight:700,fontSize:13}},h.n),
+                  React.createElement("div",{style:{fontSize:10,color:"#888"}},h.desc),
+                  React.createElement("div",{style:{display:"flex",gap:5,alignItems:"center",marginTop:2}},
+                    React.createElement("span",{className:"m",style:{fontSize:10,color:"#ef4444"}},"⚔️"+h.xp),
+                    React.createElement("span",{className:"m",style:{fontSize:9,color:rk.c,background:rk.c+"20",padding:"1px 5px",borderRadius:3}},rk.n),
+                    React.createElement("span",{style:{fontSize:9,color:"#555"}},md2+"d"),
+                    isM&&React.createElement("span",{style:{fontSize:8,color:"#818cf8",fontWeight:700}},"★")
+                  )
+                ),
+                React.createElement("span",{style:{fontSize:11,color:"#333"}},"✏️")
+              )})
+          )
+        }),
+        React.createElement("button",{style:{width:"100%",padding:12,borderRadius:12,border:"1px dashed rgba(255,255,255,.1)",background:"rgba(255,255,255,.02)",color:"#666",cursor:"pointer",fontSize:13,fontWeight:600,fontFamily:"inherit"},onClick:oAdd},"+ New Move")
+      ),
+      // ═══ MASTERY ═══
+      vw==="mastery"&&React.createElement(React.Fragment,null,
+        React.createElement("h2",{style:{fontSize:20,fontWeight:800,marginBottom:3}},"Mastery"),
+        React.createElement("p",{style:{fontSize:11,color:"#666",marginBottom:12}},"⭐ = promote."),
+        allMoves.map(function(h){var d2=s.md[h.id]||0,r=gRk(d2),nx=gNR(d2),pg=nx?((d2-r.t)/(nx.t-r.t))*100:100,isM=s.mset.indexOf(h.id)>=0;
+          return React.createElement("div",{key:h.id,style:{background:"rgba(255,255,255,.025)",border:"1px solid "+(isM?"rgba(129,140,248,.15)":"rgba(255,255,255,.06)"),borderRadius:16,padding:13,marginBottom:7}},
+            React.createElement("div",{style:{display:"flex",alignItems:"center",gap:10}},
+              React.createElement("span",{style:{fontSize:22}},h.ic),
+              React.createElement("div",{style:{flex:1}},
+                React.createElement("div",{style:{display:"flex",alignItems:"center",gap:5}},React.createElement("span",{style:{fontWeight:700,fontSize:12}},h.n),isM&&React.createElement("span",{style:{fontSize:8,color:"#818cf8",fontWeight:700,background:"rgba(129,140,248,.1)",padding:"2px 5px",borderRadius:3}},"MASTERY")),
+                React.createElement("div",{style:{display:"flex",alignItems:"center",gap:6,margin:"3px 0"}},React.createElement("span",{className:"m",style:{fontSize:10,color:r.c}},r.n),React.createElement("span",{className:"m",style:{fontSize:10,color:"#555"}},d2+"d"),nx&&React.createElement("span",{style:{fontSize:9,color:"#444"}},"→"+nx.n+" "+(nx.t-d2)+"d")),
+                React.createElement("div",{style:{height:5,borderRadius:3,background:"rgba(255,255,255,.06)",overflow:"hidden"}},React.createElement("div",{style:{height:"100%",width:pg+"%",background:isM?"#818cf8":r.c}}))
+              ),
+              React.createElement("button",{style:{background:isM?"rgba(129,140,248,.15)":"rgba(255,255,255,.03)",border:"1px solid "+(isM?"rgba(129,140,248,.3)":"rgba(255,255,255,.08)"),borderRadius:7,width:34,height:34,cursor:"pointer",fontSize:15,display:"flex",alignItems:"center",justifyContent:"center"},onClick:function(){tgM(h.id)}},isM?"⭐":"☆")
+            )
+          )
+        })
+      ),
+      // ═══ STATS ═══
+      vw==="stats"&&React.createElement(React.Fragment,null,
+        React.createElement("h2",{style:{fontSize:20,fontWeight:800,marginBottom:12}},"Character"),
+        React.createElement("div",{style:{display:"flex",gap:8,marginBottom:10}},
+          React.createElement("div",{style:{flex:1,background:"rgba(255,255,255,.025)",border:"1px solid rgba(255,255,255,.06)",borderRadius:16,padding:14,textAlign:"center"}},React.createElement("div",{style:{fontSize:32}},s.streak>0?"🔥":"💤"),React.createElement("div",{style:{fontSize:32,fontWeight:900}},s.streak),React.createElement("div",{style:{fontSize:9,color:"#777",fontWeight:600,textTransform:"uppercase"}},"streak")),
+          React.createElement("div",{style:{flex:1,background:"rgba(255,255,255,.025)",border:"1px solid rgba(255,255,255,.06)",borderRadius:16,padding:14,textAlign:"center"}},React.createElement("div",{style:{fontSize:32}},"⚔️"),React.createElement("div",{style:{fontSize:24,fontWeight:900,color:"#ef4444"}},s.txp.toLocaleString()),React.createElement("div",{style:{fontSize:9,color:"#777",fontWeight:600,textTransform:"uppercase"}},"total dmg"))
+        ),
+        // Stats
+        React.createElement("div",{style:{background:"rgba(255,255,255,.025)",border:"1px solid rgba(255,255,255,.06)",borderRadius:16,padding:18,marginBottom:10}},
+          React.createElement("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}},React.createElement("span",{style:{fontSize:13,fontWeight:700}},"📊 Stats"),usp>0&&React.createElement("span",{className:"m",style:{fontSize:10,color:"#4ade80",background:"rgba(74,222,128,.15)",padding:"2px 6px",borderRadius:4}},usp+"pts")),
+          React.createElement("div",{style:{fontSize:10,color:"#555",marginBottom:8}},"+2pts/250dmg. +5%dmg +1%resist each."),
+          SDS.map(function(st){return React.createElement("div",{key:st.k,style:{display:"flex",alignItems:"center",gap:8,padding:"8px 10px",borderRadius:9,background:"rgba(255,255,255,.02)",marginBottom:5,border:"1px solid rgba(255,255,255,.04)"}},
+            React.createElement("span",{style:{fontSize:16}},st.i),
+            React.createElement("div",{style:{flex:1}},React.createElement("div",{style:{display:"flex",justifyContent:"space-between"}},React.createElement("span",{style:{fontSize:11,fontWeight:700,color:st.c}},st.n),React.createElement("span",{className:"m",style:{fontSize:13,color:st.c}},s.stats[st.k]||0)),React.createElement("div",{style:{fontSize:9,color:"#555"}},"+"+(s.stats[st.k]||0)*5+"%dmg · "+(s.stats[st.k]||0)+"%resist")),
+            React.createElement("button",{style:{width:30,height:30,borderRadius:7,border:"1px solid rgba(255,255,255,.1)",background:"rgba(255,255,255,.03)",color:"#e4e2df",cursor:usp>0?"pointer":"default",fontSize:15,display:"flex",alignItems:"center",justifyContent:"center",fontWeight:700,opacity:usp>0?1:0.2},onClick:function(){alS(st.k)}},"+")
+          )})
+        ),
+        // Run history
+        React.createElement("div",{style:{background:"rgba(255,255,255,.025)",border:"1px solid rgba(255,255,255,.06)",borderRadius:16,padding:18,marginBottom:10}},
+          React.createElement("div",{style:{fontSize:13,fontWeight:700,marginBottom:8}},"🗺️ Runs"),
+          React.createElement("div",{style:{display:"flex",justifyContent:"space-between",padding:"5px 0"}},React.createElement("span",{style:{fontSize:12,color:"#777"}},"Best"),React.createElement("span",{className:"m",style:{fontSize:14,color:"#eab308"}},"F"+s.bf)),
+          rh.map(function(e){return React.createElement("div",{key:e[0],style:{display:"flex",alignItems:"center",gap:8,padding:"6px 0",borderTop:"1px solid rgba(255,255,255,.03)"}},
+            React.createElement("span",{className:"m",style:{fontSize:10,color:"#666",width:65}},e[0]),
+            React.createElement("div",{style:{flex:1,display:"flex",gap:2}},FL.map(function(f,i){return React.createElement("div",{key:i,style:{width:16,height:16,borderRadius:3,background:e[1].cl.indexOf(f.f)>=0?"#4ade80":"rgba(255,255,255,.04)",fontSize:7,display:"flex",alignItems:"center",justifyContent:"center",color:e[1].cl.indexOf(f.f)>=0?"#000":"#555",fontWeight:700}},f.f)})),
+            React.createElement("span",{className:"m",style:{fontSize:10,color:"#4ade80"}},"F"+Math.max(0,e[1].f-1))
+          )})
+        ),
+        // God mode
+        React.createElement("div",{style:{textAlign:"center",marginTop:14}},React.createElement("button",{style:{background:"none",border:"none",color:"#222",cursor:"pointer",fontSize:9,fontFamily:"'JetBrains Mono',monospace"},onClick:function(){sGm(!gm)}},gm?"Hide":"🔧")),
+        gm&&React.createElement("div",{style:{background:"rgba(234,179,8,.03)",border:"1px solid rgba(234,179,8,.15)",borderRadius:16,padding:18,marginTop:6}},
+          React.createElement("div",{style:{fontSize:12,fontWeight:800,color:"#eab308",marginBottom:8}},"⚡ God"),
+          React.createElement("div",{style:{display:"flex",flexDirection:"column",gap:5}},
+            React.createElement("div",{style:{display:"flex",gap:4}},
+              B({s:{flex:1,fontSize:10,padding:7},o:function(){sDof(function(d){return d+1})},children:"→Day"}),
+              B({s:{flex:1,fontSize:10,padding:7},o:function(){sDof(function(d){return Math.max(0,d-1)})},children:"←Day"}),
+              B({s:{flex:1,fontSize:10,padding:7},o:function(){sDof(0)},children:"Reset"})
+            ),
+            B({s:{fontSize:10,padding:7},o:function(){var ids=[],td2=0;for(var i=0;i<ah.length;i++)if(!ah[i].isPlan){ids.push(ah[i].id);td2+=rx(ah[i])}up(function(p){var nm=Object.assign({},p.md),c=Object.assign({},p.comp);for(var j=0;j<ids.length;j++)nm[ids[j]]=(nm[ids[j]]||0)+1;c[td]=ids;var nd=Object.assign({},p.defended);nd[td]=true;return Object.assign({},p,{comp:c,txp:p.txp+td2+defBonus,streak:p.streak+1,md:nm,defended:nd,lastDay:td,lastWeek:wk})});ddm(ah.filter(function(h){return!h.isPlan}).reduce(function(a,h){return a+rx(h)},0)+defBonus);pt("✓",td2+"dmg")},children:"✓ All"}),
+            B({s:{fontSize:10,padding:7},o:function(){ddm(500);up(function(p){return Object.assign({},p,{txp:p.txp+500})});pt("+500","")},children:"+500"}),
+            B({s:{fontSize:10,padding:7},o:function(){up(function(p){var nm=Object.assign({},p.md);for(var i=0;i<bh.length;i++)nm[bh[i].id]=(nm[bh[i].id]||0)+30;return Object.assign({},p,{md:nm})});pt("+30M","")},children:"+30 Mastery"}),
+            B({s:{fontSize:10,padding:7,color:"#ef4444"},o:function(){ss(I0);sDof(0);try{localStorage.removeItem(SK)}catch(e){}pt("Reset","")},children:"⚠️ Reset"})
+          )
+        )
+      )
+    ),
+    // ═══ MODALS ═══
+    mod==="edit"&&React.createElement("div",{className:"mb",onClick:function(){sMod(null)}},React.createElement("div",{className:"md",onClick:function(e){e.stopPropagation()}},
+      React.createElement("h3",{style:{fontSize:17,fontWeight:800,marginBottom:10}},ef.isNew?"New Move":"Edit Move"),
+      React.createElement("div",{style:{fontSize:10,color:"#888",fontWeight:600,marginBottom:4}},"MOVE NAME"),
+      React.createElement("input",{className:"inp",value:ef.n,onChange:function(e){sEf(Object.assign({},ef,{n:e.target.value}))},placeholder:"e.g. Morning Strike",autoFocus:true,style:{marginBottom:8}}),
+      React.createElement("div",{style:{fontSize:10,color:"#888",fontWeight:600,marginBottom:4}},"DESCRIPTION"),
+      React.createElement("input",{className:"inp",value:ef.desc,onChange:function(e){sEf(Object.assign({},ef,{desc:e.target.value}))},placeholder:"e.g. Wake by 10am",style:{marginBottom:8,fontSize:13}}),
+      React.createElement("div",{style:{fontSize:10,color:"#888",fontWeight:600,marginBottom:4}},"TYPE"),
+      React.createElement("div",{style:{display:"flex",gap:4,marginBottom:8,flexWrap:"wrap"}},Object.keys(MT).map(function(k){var mt=MT[k];return React.createElement("button",{key:k,style:{padding:"5px 10px",borderRadius:7,border:"1px solid "+(ef.tp===k?mt.c:"rgba(255,255,255,.08)"),color:ef.tp===k?mt.c:"#777",background:ef.tp===k?mt.c+"15":"transparent",cursor:"pointer",fontSize:11,fontWeight:600,fontFamily:"'JetBrains Mono',monospace"},onClick:function(){sEf(Object.assign({},ef,{tp:k}))}},mt.i+" "+mt.n)})),
+      React.createElement("div",{style:{fontSize:10,color:"#888",fontWeight:600,marginBottom:4}},"PHASES"),
+      React.createElement("div",{style:{display:"flex",gap:4,marginBottom:8,flexWrap:"wrap"}},phases.map(function(p){var sel=ef.phs&&ef.phs.indexOf(p.id)>=0;return React.createElement("button",{key:p.id,style:{padding:"5px 10px",borderRadius:7,border:"1px solid "+(sel?p.c:"rgba(255,255,255,.08)"),color:sel?p.c:"#777",background:sel?p.c+"15":"transparent",cursor:"pointer",fontSize:11,fontWeight:600,fontFamily:"'JetBrains Mono',monospace"},onClick:function(){sEf(function(prev){var cur=prev.phs||[];var has=cur.indexOf(p.id)>=0;var next=has?cur.filter(function(x){return x!==p.id}):cur.concat([p.id]);if(next.length===0)next=[p.id];return Object.assign({},prev,{phs:next})})}},p.i+" "+p.n)})),
+      React.createElement("div",{style:{fontSize:10,color:"#888",fontWeight:600,marginBottom:4}},"DMG"),
+      React.createElement("div",{style:{display:"flex",gap:4,marginBottom:8,flexWrap:"wrap"}},[5,10,15,20,25,30,40,50].map(function(v){return React.createElement("button",{key:v,style:{padding:"5px 10px",borderRadius:7,border:"1px solid "+(ef.xp===v?"#4ade80":"rgba(255,255,255,.08)"),color:ef.xp===v?"#4ade80":"#777",background:ef.xp===v?"rgba(74,222,128,.08)":"transparent",cursor:"pointer",fontSize:12,fontWeight:600,fontFamily:"'JetBrains Mono',monospace"},onClick:function(){sEf(Object.assign({},ef,{xp:v}))}},v)})),
+      React.createElement("div",{style:{fontSize:10,color:"#888",fontWeight:600,marginBottom:4}},"STAT"),
+      React.createElement("div",{style:{display:"flex",gap:4,marginBottom:8,flexWrap:"wrap"}},SDS.map(function(st){return React.createElement("button",{key:st.k,style:{padding:"5px 10px",borderRadius:7,border:"1px solid "+(ef.st===st.k?st.c:"rgba(255,255,255,.08)"),color:ef.st===st.k?st.c:"#777",cursor:"pointer",fontSize:12,fontWeight:600,fontFamily:"'JetBrains Mono',monospace"},onClick:function(){sEf(Object.assign({},ef,{st:st.k}))}},st.i+st.k)})),
+      React.createElement("div",{style:{fontSize:10,color:"#888",fontWeight:600,marginBottom:4}},"ICON"),
+      React.createElement("div",{style:{display:"flex",flexWrap:"wrap",gap:3,marginBottom:14}},IC.map(function(ic){return React.createElement("button",{key:ic,style:{width:34,height:34,borderRadius:7,border:"2px solid "+(ef.ic===ic?"#4ade80":"transparent"),background:ef.ic===ic?"rgba(74,222,128,.1)":"rgba(255,255,255,.03)",cursor:"pointer",fontSize:16,display:"flex",alignItems:"center",justifyContent:"center"},onClick:function(){sEf(Object.assign({},ef,{ic:ic}))}},ic)})),
+      React.createElement("div",{style:{display:"flex",gap:5}},
+        !ef.isNew&&B({s:{color:"#ef4444"},o:dlH,children:"Del"}),
+        React.createElement("div",{style:{flex:1}}),
+        B({o:function(){sMod(null)},children:"Cancel"}),
+        B({s:{background:"#4ade80",color:"#000",borderColor:"#4ade80",fontWeight:700},o:svEdit,children:ef.isNew?"Create":"Save"})
+      )
+    )),
+    mod==="plan"&&React.createElement("div",{className:"mb",onClick:function(){sMod(null)}},React.createElement("div",{className:"md",onClick:function(e){e.stopPropagation()}},
+      React.createElement("h3",{style:{fontSize:17,fontWeight:800,marginBottom:3}},"📋 Plan Tomorrow"),
+      (s.tp[tm]||[]).map(function(t){return React.createElement("div",{key:t.id,style:{display:"flex",alignItems:"center",gap:10,padding:9,borderRadius:10,border:"1px solid rgba(74,222,128,.1)",background:"rgba(74,222,128,.03)",marginBottom:5}},React.createElement("span",{style:{fontSize:15}},t.ic),React.createElement("div",{style:{flex:1,fontWeight:600,fontSize:11}},t.n),React.createElement("button",{style:{background:"none",border:"none",color:"#ef4444",cursor:"pointer"},onClick:function(){rPT(t.id)}},"✕"))}),
+      s.tl.filter(function(t){var ip=false;(s.tp[tm]||[]).forEach(function(p){if(p.n===t.n)ip=true});return!ip}).map(function(t){return React.createElement("div",{key:t.id||t.n,style:{display:"flex",alignItems:"center",gap:10,padding:9,borderRadius:10,border:"1px solid rgba(255,255,255,.04)",marginBottom:5,cursor:"pointer"},onClick:function(){aPT(Object.assign({},t,{id:ni()}))}},React.createElement("span",{style:{fontSize:15}},t.ic),React.createElement("div",{style:{flex:1,fontWeight:600,fontSize:11}},t.n),React.createElement("span",{style:{color:"#4ade80",fontWeight:700}},"+"))}),
+      B({s:{width:"100%",textAlign:"center",marginBottom:8},o:function(){sNtk({n:"",xp:15,ic:"🎯"});sMod("ntk")},children:"+ New"}),
+      React.createElement("div",{style:{display:"flex",gap:5}},B({s:{flex:1},o:function(){sMod(null)},children:"Cancel"}),B({s:{flex:1,background:"#4ade80",color:"#000",borderColor:"#4ade80",fontWeight:700},o:cPlan,children:"✓ Lock"}))
+    )),
+    mod==="ntk"&&React.createElement("div",{className:"mb",style:{zIndex:950},onClick:function(){sMod("plan")}},React.createElement("div",{className:"md",onClick:function(e){e.stopPropagation()}},
+      React.createElement("h3",{style:{fontSize:15,fontWeight:800,marginBottom:8}},"New Task"),
+      React.createElement("input",{className:"inp",value:ntk.n,onChange:function(e){sNtk(Object.assign({},ntk,{n:e.target.value}))},placeholder:"e.g. Record podcast",autoFocus:true,style:{marginBottom:8}}),
+      React.createElement("div",{style:{display:"flex",gap:4,marginBottom:8}},[5,10,15,20,25].map(function(v){return React.createElement("button",{key:v,style:{padding:"5px 10px",borderRadius:7,border:"1px solid "+(ntk.xp===v?"#4ade80":"rgba(255,255,255,.08)"),color:ntk.xp===v?"#4ade80":"#777",cursor:"pointer",fontSize:12,fontWeight:600,fontFamily:"'JetBrains Mono',monospace"},onClick:function(){sNtk(Object.assign({},ntk,{xp:v}))}},v)})),
+      React.createElement("div",{style:{display:"flex",gap:5}},B({s:{flex:1},o:function(){sMod("plan")},children:"Back"}),B({s:{flex:1,background:"#4ade80",color:"#000",borderColor:"#4ade80",fontWeight:700},o:function(){if(!ntk.n.trim())return;var t={id:ni(),n:ntk.n.trim(),xp:ntk.xp,ic:ntk.ic,st:"DIS"};aPT(t);sLib(t);sMod("plan")},children:"Add"}))
+    )),
+    mod==="taxi"&&React.createElement("div",{className:"mb",onClick:function(){sMod(null)}},React.createElement("div",{className:"md",onClick:function(e){e.stopPropagation()}},
+      React.createElement("h3",{style:{fontSize:17,fontWeight:800,marginBottom:4}},"🚕 Taxi"),
+      React.createElement("input",{className:"inp",type:"number",value:inp,onChange:function(e){sInp(e.target.value)},placeholder:"Net HKD",autoFocus:true,style:{marginBottom:10,fontSize:20,fontFamily:"'JetBrains Mono',monospace",textAlign:"center"}}),
+      React.createElement("div",{style:{display:"flex",gap:5}},B({s:{flex:1},o:function(){sMod(null)},children:"Cancel"}),B({s:{flex:1,background:"#eab308",color:"#000",borderColor:"#eab308",fontWeight:700},o:lTaxi,children:"⚔️ Log"}))
+    )),
+    mod==="cre"&&React.createElement("div",{className:"mb",onClick:function(){sMod(null)}},React.createElement("div",{className:"md",onClick:function(e){e.stopPropagation()}},
+      React.createElement("h3",{style:{fontSize:17,fontWeight:800,marginBottom:4}},"🎨 Creative"),
+      React.createElement("input",{className:"inp",type:"number",value:inp,onChange:function(e){sInp(e.target.value)},placeholder:"HKD",autoFocus:true,style:{marginBottom:10,fontSize:20,fontFamily:"'JetBrains Mono',monospace",textAlign:"center"}}),
+      React.createElement("div",{style:{display:"flex",gap:5}},B({s:{flex:1},o:function(){sMod(null)},children:"Cancel"}),B({s:{flex:1,background:"#a855f7",color:"#fff",borderColor:"#a855f7",fontWeight:700},o:lCre,children:"🎨 Log"}))
+    )),
+    mod==="impulse"&&React.createElement("div",{className:"mb",onClick:function(){sMod(null)}},React.createElement("div",{className:"md",onClick:function(e){e.stopPropagation()}},
+      React.createElement("h3",{style:{fontSize:17,fontWeight:800,marginBottom:4}},"⚡ Impulse"),
+      React.createElement("input",{className:"inp",value:inp,onChange:function(e){sInp(e.target.value)},placeholder:"What?",autoFocus:true,style:{marginBottom:10}}),
+      React.createElement("div",{style:{display:"flex",gap:5}},B({s:{flex:1},o:function(){sMod(null)},children:"Cancel"}),B({s:{flex:1,background:"#4ade80",color:"#000",borderColor:"#4ade80",fontWeight:700},o:lImp,children:"⚡+15"}))
+    )),
+    mod==="rentcfg"&&React.createElement("div",{className:"mb",onClick:function(){sMod(null)}},React.createElement("div",{className:"md",onClick:function(e){e.stopPropagation()}},
+      React.createElement("h3",{style:{fontSize:17,fontWeight:800,marginBottom:4}},"⚙️ Rent Boss Settings"),
+      React.createElement("p",{style:{fontSize:11,color:"#777",marginBottom:12}},"Customize your rent costs."),
+      React.createElement("div",{style:{fontSize:10,color:"#888",fontWeight:600,marginBottom:4}},"DAILY RENT (per shift)"),
+      React.createElement("input",{className:"inp",type:"number",value:rentInp.daily,onChange:function(e){sRentInp(Object.assign({},rentInp,{daily:e.target.value}))},placeholder:"590",style:{marginBottom:10,fontSize:18,fontFamily:"'JetBrains Mono',monospace",textAlign:"center"}}),
+      React.createElement("div",{style:{fontSize:10,color:"#888",fontWeight:600,marginBottom:4}},"WEEKLY TARGET"),
+      React.createElement("input",{className:"inp",type:"number",value:rentInp.weekly,onChange:function(e){sRentInp(Object.assign({},rentInp,{weekly:e.target.value}))},placeholder:"4130",style:{marginBottom:10,fontSize:18,fontFamily:"'JetBrains Mono',monospace",textAlign:"center"}}),
+      React.createElement("div",{style:{fontSize:10,color:"#555",marginBottom:10}},"Need "+Math.ceil((parseInt(rentInp.weekly)||4130)/(parseInt(rentInp.daily)||590))+" shifts this week."),
+      React.createElement("div",{style:{display:"flex",gap:5}},B({s:{flex:1},o:function(){sMod(null)},children:"Cancel"}),B({s:{flex:1,background:"#4ade80",color:"#000",borderColor:"#4ade80",fontWeight:700},o:function(){var d=parseInt(rentInp.daily)||590,w=parseInt(rentInp.weekly)||4130;up(function(p){return Object.assign({},p,{rent:d,whp:w})});sMod(null);pt("⚙️ Updated","$"+d+"/day · $"+w+"/wk")},children:"Save"}))
+    )),
+    // PHASES EDITOR
+    mod==="phases"&&React.createElement("div",{className:"mb",onClick:function(){sMod(null)}},React.createElement("div",{className:"md",onClick:function(e){e.stopPropagation()}},
+      React.createElement("h3",{style:{fontSize:17,fontWeight:800,marginBottom:10}},"⚙️ Edit Phases"),
+      React.createElement("p",{style:{fontSize:11,color:"#777",marginBottom:12}},"Your day types. Tap to edit, drag to reorder."),
+      phases.map(function(p){return React.createElement("div",{key:p.id,style:{display:"flex",alignItems:"center",gap:10,padding:10,borderRadius:10,border:"1px solid "+(s.phase===p.id?p.c+"33":"rgba(255,255,255,.06)"),background:"rgba(255,255,255,.02)",marginBottom:5,cursor:"pointer"},onClick:function(){sPhEd(Object.assign({},p,{isNew:false}));sMod("phEdit")}},
+        React.createElement("span",{style:{fontSize:20}},p.i),
+        React.createElement("div",{style:{flex:1}},
+          React.createElement("div",{style:{fontWeight:700,fontSize:13,color:p.c}},p.n),
+          React.createElement("div",{style:{fontSize:10,color:"#555"}},allMoves.filter(function(m){return m.phs&&m.phs.indexOf(p.id)>=0}).length+" moves")
+        ),
+        React.createElement("span",{style:{fontSize:11,color:"#333"}},"✏️")
+      )}),
+      React.createElement("button",{style:{width:"100%",padding:12,borderRadius:12,border:"1px dashed rgba(255,255,255,.1)",background:"rgba(255,255,255,.02)",color:"#666",cursor:"pointer",fontSize:13,fontWeight:600,fontFamily:"inherit",marginTop:4},onClick:function(){sPhEd({id:ni(),n:"",i:"⚡",c:"#f59e0b",isNew:true});sMod("phEdit")}},"+  New Phase"),
+      React.createElement("div",{style:{marginTop:10}},B({s:{width:"100%"},o:function(){sMod(null)},children:"Done"}))
+    )),
+    // PHASE EDIT SINGLE
+    mod==="phEdit"&&phEd&&React.createElement("div",{className:"mb",style:{zIndex:950},onClick:function(){sMod("phases")}},React.createElement("div",{className:"md",onClick:function(e){e.stopPropagation()}},
+      React.createElement("h3",{style:{fontSize:17,fontWeight:800,marginBottom:10}},phEd.isNew?"New Phase":"Edit Phase"),
+      React.createElement("div",{style:{fontSize:10,color:"#888",fontWeight:600,marginBottom:4}},"NAME"),
+      React.createElement("input",{className:"inp",value:phEd.n,onChange:function(e){sPhEd(Object.assign({},phEd,{n:e.target.value}))},placeholder:"e.g. Rest Day",autoFocus:true,style:{marginBottom:8}}),
+      React.createElement("div",{style:{fontSize:10,color:"#888",fontWeight:600,marginBottom:4}},"ICON"),
+      React.createElement("div",{style:{display:"flex",flexWrap:"wrap",gap:3,marginBottom:10}},IC.map(function(ic){return React.createElement("button",{key:ic,style:{width:34,height:34,borderRadius:7,border:"2px solid "+(phEd.i===ic?"#4ade80":"transparent"),background:phEd.i===ic?"rgba(74,222,128,.1)":"rgba(255,255,255,.03)",cursor:"pointer",fontSize:16,display:"flex",alignItems:"center",justifyContent:"center"},onClick:function(){sPhEd(Object.assign({},phEd,{i:ic}))}},ic)})),
+      React.createElement("div",{style:{fontSize:10,color:"#888",fontWeight:600,marginBottom:4}},"COLOR"),
+      React.createElement("div",{style:{display:"flex",gap:4,marginBottom:12}},["#f59e0b","#06b6d4","#a855f7","#ef4444","#4ade80","#f472b6","#3b82f6","#eab308"].map(function(c){return React.createElement("button",{key:c,style:{width:30,height:30,borderRadius:7,background:c,border:phEd.c===c?"3px solid white":"3px solid transparent",cursor:"pointer"},onClick:function(){sPhEd(Object.assign({},phEd,{c:c}))}})})),
+      React.createElement("div",{style:{display:"flex",gap:5}},
+        !phEd.isNew&&phases.length>1&&B({s:{color:"#ef4444"},o:function(){var delId=phEd.id;up(function(p){var newMoves=(p.moves||[]).map(function(m){if(!m.phs)return m;var np=m.phs.filter(function(x){return x!==delId});return Object.assign({},m,{phs:np})}).filter(function(m){return m.phs&&m.phs.length>0});return Object.assign({},p,{phases:(p.phases||DEF_PHASES).filter(function(x){return x.id!==delId}),phase:p.phase===delId?(p.phases||DEF_PHASES).filter(function(x){return x.id!==delId})[0].id:p.phase,moves:newMoves})});sMod("phases")},children:"Delete"}),
+        React.createElement("div",{style:{flex:1}}),
+        B({o:function(){sMod("phases")},children:"Cancel"}),
+        B({s:{background:"#4ade80",color:"#000",borderColor:"#4ade80",fontWeight:700},o:function(){if(!phEd.n.trim())return;if(phEd.isNew){up(function(p){return Object.assign({},p,{phases:(p.phases||DEF_PHASES).concat([{id:phEd.id,n:phEd.n.trim(),i:phEd.i,c:phEd.c}])})})}else{up(function(p){return Object.assign({},p,{phases:(p.phases||DEF_PHASES).map(function(x){return x.id===phEd.id?{id:x.id,n:phEd.n.trim(),i:phEd.i,c:phEd.c}:x})})})}sMod("phases")},children:phEd.isNew?"Create":"Save"})
+      )
+    )),
+    // NAV
+    React.createElement("div",{className:"nv"},
+      [["home","🎮","Dungeon"],["moves","⚔️","Moves"],["mastery","🏆","Mastery"],["stats","📊","Stats"]].map(function(t){return React.createElement("button",{key:t[0],style:{flex:1,maxWidth:80,display:"flex",flexDirection:"column",alignItems:"center",gap:2,padding:7,border:"none",background:"none",color:vw===t[0]?ac:"#444",cursor:"pointer",fontSize:9,fontWeight:600,fontFamily:"inherit"},onClick:function(){sVw(t[0])}},React.createElement("span",{style:{fontSize:20}},t[1]),t[2])})
+    )
   );
 }
+ReactDOM.render(React.createElement(App),document.getElementById("root"));
+</script>
+</body>
+</html>
